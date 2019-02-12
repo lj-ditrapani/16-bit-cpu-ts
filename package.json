@@ -1,0 +1,59 @@
+{
+  "name": "ljd-16-bit-cpu",
+  "version": "0.0.1",
+  "description": "LJD 16-bit processor",
+  "main": "lib/ljd_16_bit_cpu.js",
+  "types": "lib/ljd_16_bit_cpu.d.ts",
+  "scripts": {
+    "test": "nyc -e .ts mocha -r ts-node/register \"test/**/*_test.ts\"",
+    "test1": "mocha -r ts-node/register",
+    "fmt": "prettier --parser typescript --write \"*.ts\" \"src/**/*.ts\" \"test/**/*.ts\"",
+    "fmtjs": "prettier --write \"src/**/*.js\" \"test/**/*.js\" \"src/**/*.json\" \"test/**/*.json\" \"*.json\"",
+    "tlint": "tslint --fix -c tslint.json '*.ts' 'src/**/*.ts' 'test/**/*.ts'",
+    "lint": "npm run tlint && npm run fmt && npm run fmtjs",
+    "tsc": "tsc",
+    "browser-build": "tsc ",
+    "doc": "typedoc --excludePrivate --excludeNotExported --out docs/ src && touch docs/.nojekyll",
+    "all": "npm run lint && tsc && npm test"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "per-file": true,
+    "statements": 100,
+    "branches": 100,
+    "functions": 100,
+    "lines": 100,
+    "require": [
+      "ts-node/register"
+    ],
+    "exclude": [
+      "**/*.d.ts",
+      "test/**"
+    ]
+  },
+  "keywords": [
+    "cpu",
+    "16-bit"
+  ],
+  "author": "Jonathan Di Trapani",
+  "repository": "https://github.com/lj-ditrapani/16-bit-cpu-typescript",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.19",
+    "@types/sinon": "^7.0.5",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "prettier": "^1.16.1",
+    "sinon": "^7.2.3",
+    "source-map-support": "^0.5.10",
+    "ts-node": "^8.0.2",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.17.0",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.2.4"
+  },
+  "files": [
+    "lib/**/*"
+  ]
+}
