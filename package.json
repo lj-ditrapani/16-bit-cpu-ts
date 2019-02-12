@@ -12,9 +12,10 @@
     "tlint": "tslint --fix -c tslint.json '*.ts' 'src/**/*.ts' 'test/**/*.ts'",
     "lint": "npm run tlint && npm run fmt && npm run fmtjs",
     "tsc": "tsc",
-    "browser-build": "tsc ",
+    "browser-build": "tsc -p browser-tsconfig.json",
     "doc": "typedoc --excludePrivate --excludeNotExported --out docs/ src && touch docs/.nojekyll",
-    "all": "npm run lint && tsc && npm test"
+    "static": "http-server",
+    "all": "npm run lint && tsc && npm run browser-build && npm test"
   },
   "nyc": {
     "check-coverage": true,
@@ -54,6 +55,7 @@
     "typescript": "^3.2.4"
   },
   "files": [
-    "lib/**/*"
+    "lib",
+    "browser"
   ]
 }
