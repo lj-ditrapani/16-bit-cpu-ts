@@ -4,8 +4,10 @@ export interface ICpu {
 }
 
 export class Cpu implements ICpu {
-  private readonly instructionCounter = 0
+  private instructionCounter = 0
+  private registers = new Uint16Array(16)
   private readonly instructions: Instruction[]
+  private ioRamBuffer: Uint16Array
 
   constructor(
     private readonly programRom: Uint16Array,
@@ -23,6 +25,7 @@ export class Cpu implements ICpu {
       const [opCode, a, b, c] = getNibbles(word)
       return opCode2Instruction[opCode](a, b, c)
     })
+    this.ioRamBuffer = ioRamBuffer1
   }
 
   public run(n: number): void {
@@ -39,52 +42,100 @@ export class Cpu implements ICpu {
     switch (instruction.name) {
       case 'end':
         return true
-        break
-      case 'hby':
+      case 'hby': {
+        const value = this.registers[instruction.destinationRegister]
+        this.registers[instruction.destinationRegister] =
+          (instruction.immediate8Bit << 8) | (value | 0x00ff)
+        this.instructionCounter += 1
         return false
-        break
-      case 'lby':
+      }
+      case 'lby': {
+        const value = this.registers[instruction.destinationRegister]
+        this.registers[instruction.destinationRegister] =
+          (value & 0xff00) | instruction.immediate8Bit
+        this.instructionCounter += 1
         return false
-        break
-      case 'lod':
+      }
+      case 'lod': {
+        const address = this.registers[instruction.sourceRegister1]
+        this.registers[instruction.destinationRegister] = this.read(address)
+        this.instructionCounter += 1
         return false
-        break
-      case 'str':
+      }
+      case 'str': {
+        const address = this.registers[instruction.sourceRegister1]
+        this.write(address, this.registers[instruction.sourceRegister2])
+        this.instructionCounter += 1
         return false
-        break
+      }
       case 'add':
+        this.registers[instruction.destinationRegister] =
+          this.registers[instruction.sourceRegister1] +
+          this.registers[instruction.sourceRegister2]
         return false
-        break
       case 'sub':
+        this.registers[instruction.destinationRegister] =
+          this.registers[instruction.sourceRegister1] -
+          this.registers[instruction.sourceRegister2]
         return false
-        break
       case 'adi':
+        this.registers[instruction.destinationRegister] =
+          this.registers[instruction.sourceRegister1] + instruction.sourceRegister2
         return false
-        break
       case 'sbi':
+        this.registers[instruction.destinationRegister] =
+          this.registers[instruction.sourceRegister1] - instruction.sourceRegister2
         return false
-        break
       case 'and':
+        this.registers[instruction.destinationRegister] =
+          this.registers[instruction.sourceRegister1] &
+          this.registers[instruction.sourceRegister2]
         return false
-        break
       case 'orr':
+        this.registers[instruction.destinationRegister] =
+          this.registers[instruction.sourceRegister1] |
+          this.registers[instruction.sourceRegister2]
         return false
-        break
       case 'xor':
+        this.registers[instruction.destinationRegister] =
+          this.registers[instruction.sourceRegister1] ^
+          this.registers[instruction.sourceRegister2]
         return false
-        break
       case 'not':
+        this.registers[instruction.destinationRegister] = ~this.registers[
+          instruction.sourceRegister1
+        ]
         return false
-        break
       case 'shf':
         return false
-        break
       case 'brv':
         return false
-        break
       case 'brf':
         return false
-        break
+    }
+  }
+
+  private read(address: number): number {
+    if (address < 0x8000) {
+      return this.dataRom[address]
+    } else if (address < 0xf000) {
+      return this.dataRam[address & 0x7fff]
+    } else if (address < 0xf800) {
+      return this.ioRamBuffer[address & 0x07ff]
+    } else {
+      throw new Error('Tried to read address out of bounds ' + address)
+    }
+  }
+
+  private write(address: number, value: number): void {
+    if (address < 0x8000) {
+      this.dataRom[address] = value
+    } else if (address < 0xf000) {
+      this.dataRam[address & 0x7fff] = value
+    } else if (address < 0xf800) {
+      this.ioRamBuffer[address & 0x07ff] = value
+    } else {
+      throw new Error('Tried to read address out of bounds ' + address)
     }
   }
 }
