@@ -38,11 +38,54 @@ export class Cpu implements ICpu {
     const instruction = this.instructions[this.instructionCounter]
     switch (instruction.name) {
       case 'end':
+        return true
         break
       case 'hby':
+        return false
+        break
+      case 'lby':
+        return false
+        break
+      case 'lod':
+        return false
+        break
+      case 'str':
+        return false
+        break
+      case 'add':
+        return false
+        break
+      case 'sub':
+        return false
+        break
+      case 'adi':
+        return false
+        break
+      case 'sbi':
+        return false
+        break
+      case 'and':
+        return false
+        break
+      case 'orr':
+        return false
+        break
+      case 'xor':
+        return false
+        break
+      case 'not':
+        return false
+        break
+      case 'shf':
+        return false
+        break
+      case 'brv':
+        return false
+        break
+      case 'brf':
+        return false
         break
     }
-    return true
   }
 }
 
@@ -56,7 +99,7 @@ const ensureLength = (array: Uint16Array, length: number, name: string): void =>
   ensure(array.length === length, `${name} length must be ${length}`)
 }
 
-type Instruction = End | LoadByteInstruction | Lod | Str | Nibbles3Instruction
+type Instruction = End | LoadByteInstruction | Lod | Str | Nibbles3Instruction | Not
 
 class End {
   public readonly name: 'end' = 'end'
@@ -95,13 +138,32 @@ class Str {
   ) {}
 }
 
-type instructionsWith3Nibbles = 'add' | 'sub' | 'adi' | 'sbi' | 'and' | 'orr' | 'xor'
+type instructionsWith3Nibbles =
+  | 'add'
+  | 'sub'
+  | 'adi'
+  | 'sbi'
+  | 'and'
+  | 'orr'
+  | 'xor'
+  | 'shf'
+  | 'brv'
+  | 'brf'
 
 class Nibbles3Instruction {
   constructor(
     public readonly name: instructionsWith3Nibbles,
     public readonly sourceRegister1: number,
     public readonly sourceRegister2: number,
+    public readonly destinationRegister: number
+  ) {}
+}
+
+class Not {
+  public readonly name: 'not' = 'not'
+
+  constructor(
+    public readonly sourceRegister1: number,
     public readonly destinationRegister: number
   ) {}
 }
@@ -124,5 +186,9 @@ const opCode2Instruction: Array<(a: number, b: number, c: number) => Instruction
   (a, b, c) => new Nibbles3Instruction('sbi', a, b, c),
   (a, b, c) => new Nibbles3Instruction('and', a, b, c),
   (a, b, c) => new Nibbles3Instruction('orr', a, b, c),
-  (a, b, c) => new Nibbles3Instruction('xor', a, b, c)
+  (a, b, c) => new Nibbles3Instruction('xor', a, b, c),
+  (a, _b, c) => new Not(a, c),
+  (a, b, c) => new Nibbles3Instruction('shf', a, b, c),
+  (a, b, c) => new Nibbles3Instruction('brv', a, b, c),
+  (a, b, c) => new Nibbles3Instruction('brf', a, b, c)
 ]
