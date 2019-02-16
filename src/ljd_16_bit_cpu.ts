@@ -57,7 +57,7 @@ const ensureLength = (array: Uint16Array, length: number, name: string): void =>
   ensure(array.length === length, `${name} length must be ${length}`)
 }
 
-type Instruction = End | Hby
+type Instruction = End | Hby | Lby | Lod | Str | Add | Sub
 
 /* tslint:disable */
 class End {
@@ -78,10 +78,69 @@ class Hby {
   }
 }
 
+class Lby {
+  public readonly name: 'lby' = 'lby'
+  public readonly immediate8Bit: number
+  public readonly destinationRegister: number
+
+  constructor(a: number, b: number, c: number) {
+    this.immediate8Bit = (a << 4) | b
+    this.destinationRegister = c
+  }
+}
+
+class Lod {
+  public readonly name: 'lod' = 'lod'
+  public readonly sourceRegister1: number
+  public readonly destinationRegister: number
+
+  constructor(a: number, _b: number, c: number) {
+    this.sourceRegister1 = a
+    this.destinationRegister = c
+  }
+}
+
+class Str {
+  public readonly name: 'str' = 'str'
+  public readonly sourceRegister1: number
+  public readonly sourceRegister2: number
+
+  constructor(a: number, b: number, _c: number) {
+    this.sourceRegister1 = a
+    this.sourceRegister2 = b
+  }
+}
+
+class Add {
+  public readonly name: 'add' = 'add'
+  public readonly sourceRegister1: number
+  public readonly sourceRegister2: number
+  public readonly destinationRegister: number
+
+  constructor(a: number, b: number, c: number) {
+    this.sourceRegister1 = a
+    this.sourceRegister2 = b
+    this.destinationRegister = c
+  }
+}
+
+class Sub {
+  public readonly name: 'sub' = 'sub'
+  public readonly sourceRegister1: number
+  public readonly sourceRegister2: number
+  public readonly destinationRegister: number
+
+  constructor(a: number, b: number, c: number) {
+    this.sourceRegister1 = a
+    this.sourceRegister2 = b
+    this.destinationRegister = c
+  }
+}
+
 const getNibbles = (word: number): [number, number, number, number] => [
   word >> 12,
   (word >> 8) & 0xf,
   (word >> 4) & 0xf,
   word & 0xf
 ]
-const opCode2Instruction = [End, Hby]
+const opCode2Instruction = [End, Hby, Lby, Lod, Str, Add, Sub]
