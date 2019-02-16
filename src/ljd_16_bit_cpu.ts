@@ -58,63 +58,52 @@ const ensureLength = (array: Uint16Array, length: number, name: string): void =>
 
 type Instruction = End | LoadByteInstruction | Lod | Str | Nibbles3Instruction
 
-/* tslint:disable */
 class End {
   public readonly name: 'end' = 'end'
-
-  constructor(_a: number, _b: number, _c: number) {}
 }
-/* tslint:enable */
+
+const end = new End()
 
 class LoadByteInstruction {
   public readonly immediate8Bit: number
-  public readonly destinationRegister: number
 
-  constructor(public readonly name: 'hby' | 'lby', a: number, b: number, c: number) {
+  constructor(
+    public readonly name: 'hby' | 'lby',
+    a: number,
+    b: number,
+    public readonly destinationRegister: number
+  ) {
     this.immediate8Bit = (a << 4) | b
-    this.destinationRegister = c
   }
 }
 
 class Lod {
   public readonly name: 'lod' = 'lod'
-  public readonly sourceRegister1: number
-  public readonly destinationRegister: number
 
-  constructor(a: number, _b: number, c: number) {
-    this.sourceRegister1 = a
-    this.destinationRegister = c
-  }
+  constructor(
+    public readonly sourceRegister1: number,
+    public readonly destinationRegister: number
+  ) {}
 }
 
 class Str {
   public readonly name: 'str' = 'str'
-  public readonly sourceRegister1: number
-  public readonly sourceRegister2: number
 
-  constructor(a: number, b: number, _c: number) {
-    this.sourceRegister1 = a
-    this.sourceRegister2 = b
-  }
+  constructor(
+    public readonly sourceRegister1: number,
+    public readonly sourceRegister2: number
+  ) {}
 }
 
 type instructionsWith3Nibbles = 'add' | 'sub' | 'adi' | 'sbi' | 'and' | 'orr' | 'xor'
 
 class Nibbles3Instruction {
-  public readonly sourceRegister1: number
-  public readonly sourceRegister2: number
-  public readonly destinationRegister: number
-
   constructor(
     public readonly name: instructionsWith3Nibbles,
-    a: number,
-    b: number,
-    c: number
-  ) {
-    this.sourceRegister1 = a
-    this.sourceRegister2 = b
-    this.destinationRegister = c
-  }
+    public readonly sourceRegister1: number,
+    public readonly sourceRegister2: number,
+    public readonly destinationRegister: number
+  ) {}
 }
 
 const getNibbles = (word: number): [number, number, number, number] => [
@@ -124,11 +113,11 @@ const getNibbles = (word: number): [number, number, number, number] => [
   word & 0xf
 ]
 const opCode2Instruction: Array<(a: number, b: number, c: number) => Instruction> = [
-  (a, b, c) => new End(a, b, c),
+  (_a, _b, _c) => end,
   (a, b, c) => new LoadByteInstruction('hby', a, b, c),
   (a, b, c) => new LoadByteInstruction('lby', a, b, c),
-  (a, b, c) => new Lod(a, b, c),
-  (a, b, c) => new Str(a, b, c),
+  (a, _b, c) => new Lod(a, c),
+  (a, b, _c) => new Str(a, b),
   (a, b, c) => new Nibbles3Instruction('add', a, b, c),
   (a, b, c) => new Nibbles3Instruction('sub', a, b, c),
   (a, b, c) => new Nibbles3Instruction('adi', a, b, c),
