@@ -20,8 +20,9 @@ export class Cpu implements ICpu {
     ensureLength(this.ioRamBuffer1, 2 * 1024, 'ioRamBuffer1')
     ensureLength(this.ioRamBuffer2, 2 * 1024, 'ioRamBuffer2')
     this.instructions = Array.from(programRom).map(word => {
-      const instructionConstructor = opCode2Instruction[getOpCode(word)]
-      return new instructionConstructor(word)
+      const [opCode, a, b, c] = getNibbles(word)
+      const instructionConstructor = opCode2Instruction[opCode]
+      return new instructionConstructor(a, b, c)
     })
   }
 
@@ -62,7 +63,7 @@ type Instruction = End | Hby
 class End {
   public readonly name: 'end' = 'end'
 
-  constructor(_instructionWord: number) {}
+  constructor(_a: number, _b: number, _c: number) {}
 }
 /* tslint:enable */
 
@@ -71,13 +72,16 @@ class Hby {
   public readonly immediate8Bit: number
   public readonly destinationRegister: number
 
-  constructor(instructionWord: number) {
-    this.immediate8Bit = getImmediate8Bit(instructionWord)
-    this.destinationRegister = getNibble3(instructionWord)
+  constructor(a: number, b: number, c: number) {
+    this.immediate8Bit = (a << 4) | b
+    this.destinationRegister = c
   }
 }
 
-const getImmediate8Bit = (word: number): number => (word >> 4) & 0xff
-const getOpCode = (word: number): number => (word >> 12) & 0xf
-const getNibble3 = (word: number): number => word & 0xf
+const getNibbles = (word: number): [number, number, number, number] => [
+  word >> 12,
+  (word >> 8) & 0xf,
+  (word >> 4) & 0xf,
+  word & 0xf
+]
 const opCode2Instruction = [End, Hby]
