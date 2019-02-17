@@ -8,7 +8,7 @@ export class Cpu implements ICpu {
   private registers = new Uint16Array(16)
   private readonly instructions: Instruction[]
   private ioRamBuffer: Uint16Array
-  // private overflowFlag: number = 0
+  private overflowFlag: number = 0
   private carryFlag: number = 0
 
   constructor(
@@ -74,39 +74,47 @@ export class Cpu implements ICpu {
         this.registers[instruction.destinationRegister] =
           this.registers[instruction.sourceRegister1] +
           this.registers[instruction.sourceRegister2]
+        this.instructionCounter += 1
         return false
       case 'sub':
         this.registers[instruction.destinationRegister] =
           this.registers[instruction.sourceRegister1] -
           this.registers[instruction.sourceRegister2]
+        this.instructionCounter += 1
         return false
       case 'adi':
         this.registers[instruction.destinationRegister] =
           this.registers[instruction.sourceRegister1] + instruction.sourceRegister2
+        this.instructionCounter += 1
         return false
       case 'sbi':
         this.registers[instruction.destinationRegister] =
           this.registers[instruction.sourceRegister1] - instruction.sourceRegister2
+        this.instructionCounter += 1
         return false
       case 'and':
         this.registers[instruction.destinationRegister] =
           this.registers[instruction.sourceRegister1] &
           this.registers[instruction.sourceRegister2]
+        this.instructionCounter += 1
         return false
       case 'orr':
         this.registers[instruction.destinationRegister] =
           this.registers[instruction.sourceRegister1] |
           this.registers[instruction.sourceRegister2]
+        this.instructionCounter += 1
         return false
       case 'xor':
         this.registers[instruction.destinationRegister] =
           this.registers[instruction.sourceRegister1] ^
           this.registers[instruction.sourceRegister2]
+        this.instructionCounter += 1
         return false
       case 'not':
         this.registers[instruction.destinationRegister] = ~this.registers[
           instruction.sourceRegister1
         ]
+        this.instructionCounter += 1
         return false
       case 'shf': {
         const value = this.registers[instruction.sourceRegister1]
@@ -115,13 +123,44 @@ export class Cpu implements ICpu {
           instruction.direction === 'left'
             ? (value << instruction.amount) & 0xffff
             : value >> instruction.amount
+        this.instructionCounter += 1
         return false
       }
-      case 'brv':
+      case 'brv': {
+        const value = instruction.sourceRegister1
+        let jump: boolean = false
+        if (instruction.negative && value < 0) {
+          jump = true
+        } else if (instruction.zero && value === 0) {
+          jump = true
+        } else if (instruction.positive && value > 0) {
+          jump = true
+        } else {
+          jump = false
+        }
+        if (jump) {
+          this.instructionCounter = instruction.sourceRegister2
+        } else {
+          this.instructionCounter += 1
+        }
         return false
-      case 'brf':
-        return !!this.carryFlag
-      // return false
+      }
+      case 'brf': {
+        let jump: boolean = false
+        if (instruction.overflow && this.overflowFlag) {
+          jump = true
+        } else if (instruction.carry && this.carryFlag) {
+          jump = true
+        } else {
+          jump = false
+        }
+        if (jump) {
+          this.instructionCounter = instruction.sourceRegister2
+        } else {
+          this.instructionCounter += 1
+        }
+        return false
+      }
     }
   }
 
@@ -255,21 +294,30 @@ class Shf {
 
 class Brv {
   public readonly name: 'brv' = 'brv'
+  public readonly negative: boolean
+  public readonly zero: boolean
+  public readonly positive: boolean
 
   constructor(
     public readonly sourceRegister1: number,
     public readonly sourceRegister2: number,
-    public readonly destinationRegister: number
-  ) {}
+    conditions: number
+  ) {
+    this.negative = (conditions & 4) === 4
+    this.zero = (conditions & 2) === 2
+    this.positive = (conditions & 1) === 1
+  }
 }
 
 class Brf {
   public readonly name: 'brf' = 'brf'
+  public readonly overflow: boolean
+  public readonly carry: boolean
 
-  constructor(
-    public readonly sourceRegister2: number,
-    public readonly destinationRegister: number
-  ) {}
+  constructor(public readonly sourceRegister2: number, conditions: number) {
+    this.overflow = (conditions & 2) === 2
+    this.carry = (conditions & 1) === 1
+  }
 }
 
 const getNibbles = (word: number): [number, number, number, number] => [
