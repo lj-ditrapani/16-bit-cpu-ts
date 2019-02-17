@@ -9,6 +9,7 @@ export const makeCpuAndIoRoms = () CpuAndIoRoms =>
 */
 
 export class Cpu implements ICpu {
+  private static readonly frameInterruptVector = 0xf800
   private overflowFlag: boolean = false
   private carryFlag: boolean = false
   private instructionCounter = 0
@@ -38,12 +39,12 @@ export class Cpu implements ICpu {
       }
     }
     if (this.activeBuffer === 1) {
-      // copy frame interrupt vector
+      this.ioRam2[Cpu.frameInterruptVector] = this.ioRam1[Cpu.frameInterruptVector]
       this.activeBuffer = 2
       this.ioRam = this.ioRam2
       return this.ioRam1
     } else {
-      // copy frame interrupt vector
+      this.ioRam1[Cpu.frameInterruptVector] = this.ioRam2[Cpu.frameInterruptVector]
       this.activeBuffer = 1
       this.ioRam = this.ioRam1
       return this.ioRam2
