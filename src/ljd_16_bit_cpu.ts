@@ -5,13 +5,13 @@ export interface ICpu {
 }
 
 export class Cpu implements ICpu {
+  private overflowFlag: boolean = false
+  private carryFlag: boolean = false
   private instructionCounter = 0
   private readonly registers = new Uint16Array(16)
-  private readonly dataRam = new Uint16Array(28 * 1024)
   private readonly instructions: Instruction[]
+  private readonly dataRam = new Uint16Array(28 * 1024)
   private ioRam: Uint16Array
-  private overflowFlag: boolean = false
-  private carryFlag: number = 0
   private activeBuffer: 1 | 2 = 1
 
   constructor(
@@ -215,7 +215,7 @@ export class Cpu implements ICpu {
 
   private basicAdd(a: number, b: number, c: number, rd: number): void {
     const sum = a + b + c
-    this.carryFlag = sum >= 65536 ? 1 : 0
+    this.carryFlag = sum >= 65536
     const sum16Bit = sum & 0xffff
     this.overflowFlag =
       (isNegative(a) && isNegative(b) && isPositive(sum)) ||
@@ -238,6 +238,8 @@ type Instruction =
   | Shf
   | Brv
   | Brf
+
+type instructionsWith3Nibbles = 'add' | 'sub' | 'adi' | 'sbi' | 'and' | 'orr' | 'xor'
 
 class End {
   public readonly name: 'end' = 'end'
@@ -275,8 +277,6 @@ class Str {
     public readonly sourceRegister2: number
   ) {}
 }
-
-type instructionsWith3Nibbles = 'add' | 'sub' | 'adi' | 'sbi' | 'and' | 'orr' | 'xor'
 
 class Nibbles3Instruction {
   constructor(
@@ -372,10 +372,10 @@ const getShiftCarry = (
   value: number,
   direction: 'left' | 'right',
   amount: number
-): number => {
+): boolean => {
   const position = direction === 'left' ? 16 - amount : amount - 1
   const mask = 1 << position
-  return (value & mask) >> position
+  return (value & mask) > 0
 }
 
 const isPositive = (word: number): boolean => word < 32768
