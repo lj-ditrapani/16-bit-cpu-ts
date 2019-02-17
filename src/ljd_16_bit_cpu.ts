@@ -6,7 +6,7 @@ export interface ICpu {
 
 export class Cpu implements ICpu {
   private instructionCounter = 0
-  private registers = new Uint16Array(16)
+  private readonly registers = new Uint16Array(16)
   private readonly dataRam = new Uint16Array(28 * 1024)
   private readonly instructions: Instruction[]
   private ioRam: Uint16Array
