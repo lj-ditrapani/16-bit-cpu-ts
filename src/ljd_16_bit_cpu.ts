@@ -3,10 +3,15 @@ export interface ICpu {
   step(): void
 }
 
-/*
-export const makeCpuAndIoRamsWithPaddedRoms = (): CpuAndIoRoms =>
-export const makeCpuAndIoRoms = () CpuAndIoRoms =>
-*/
+export const makeCpuPadRoms = (programRom: number[], dataRom: number[]): Cpu => {
+  ensureMaxLength(programRom, 64 * 1024, 'programRom')
+  ensureMaxLength(dataRom, 32 * 1024, 'dataRom')
+  const pRom = new Uint16Array(64 * 1024)
+  pRom.set(programRom)
+  const dRom = new Uint16Array(32 * 1024)
+  dRom.set(dataRom)
+  return new Cpu(pRom, dRom)
+}
 
 export class Cpu implements ICpu {
   private static readonly frameInterruptVector = 0xf800
@@ -367,6 +372,10 @@ const ensure = (flag: boolean, message: string): void => {
 
 const ensureLength = (array: Uint16Array, length: number, name: string): void => {
   ensure(array.length === length, `${name} length must be ${length}`)
+}
+
+const ensureMaxLength = (array: number[], length: number, name: string): void => {
+  ensure(array.length <= length, `${name} length must be <= ${length}`)
 }
 
 const getShiftCarry = (
