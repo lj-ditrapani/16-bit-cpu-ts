@@ -3,7 +3,7 @@ export interface ICpu {
   step(): void
 }
 
-export const makeCpuPadRoms = (programRom: number[], dataRom: number[]): Cpu => {
+export const makeCpu = (programRom: number[], dataRom: number[]): Cpu => {
   ensureMaxLength(programRom, 64 * 1024, 'programRom')
   ensureMaxLength(dataRom, 32 * 1024, 'dataRom')
   const pRom = new Uint16Array(64 * 1024)
