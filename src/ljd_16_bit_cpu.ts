@@ -1,8 +1,12 @@
 export interface ICpu {
-  run(n: number): void
+  run(n: number): Uint16Array
   step(): void
-  swapIoRam(): void
 }
+
+/*
+export const makeCpuAndIoRamsWithPaddedRoms = (): CpuAndIoRoms =>
+export const makeCpuAndIoRoms = () CpuAndIoRoms =>
+*/
 
 export class Cpu implements ICpu {
   private overflowFlag: boolean = false
@@ -10,43 +14,39 @@ export class Cpu implements ICpu {
   private instructionCounter = 0
   private readonly registers = new Uint16Array(16)
   private readonly instructions: Instruction[]
-  private readonly dataRam = new Uint16Array(28 * 1024)
+  private readonly dataRam = new Uint16Array(30 * 1024)
+  private readonly ioRam1: Uint16Array = new Uint16Array(1 * 1024)
+  private readonly ioRam2: Uint16Array = new Uint16Array(1 * 1024)
   private ioRam: Uint16Array
   private activeBuffer: 1 | 2 = 1
 
-  constructor(
-    private readonly programRom: Uint16Array,
-    private readonly dataRom: Uint16Array,
-    private readonly ioRam1: Uint16Array,
-    private readonly ioRam2: Uint16Array
-  ) {
-    ensureLength(this.programRom, 64 * 1024, 'programRom')
-    ensureLength(this.dataRom, 32 * 1024, 'dataRom')
-    ensureLength(this.ioRam1, 2 * 1024, 'ioRam1')
-    ensureLength(this.ioRam2, 2 * 1024, 'ioRam2')
+  constructor(programRom: Uint16Array, private readonly dataRom: Uint16Array) {
+    ensureLength(programRom, 64 * 1024, 'programRom')
+    ensureLength(dataRom, 32 * 1024, 'dataRom')
     this.instructions = Array.from(programRom).map(word => {
       const [opCode, a, b, c] = getNibbles(word)
       return opCode2Instruction[opCode](a, b, c)
     })
-    this.ioRam = ioRam1
+    this.ioRam = this.ioRam1
   }
 
-  public swapIoRam(): void {
-    if (this.activeBuffer === 1) {
-      this.activeBuffer = 2
-      this.ioRam = this.ioRam2
-    } else {
-      this.activeBuffer = 1
-      this.ioRam = this.ioRam1
-    }
-  }
-
-  public run(n: number): void {
+  public run(n: number): Uint16Array {
     while (n > 0) {
       const done = this.step()
       if (done) {
         break
       }
+    }
+    if (this.activeBuffer === 1) {
+      // copy frame interrupt vector
+      this.activeBuffer = 2
+      this.ioRam = this.ioRam2
+      return this.ioRam1
+    } else {
+      // copy frame interrupt vector
+      this.activeBuffer = 1
+      this.ioRam = this.ioRam1
+      return this.ioRam2
     }
   }
 
@@ -192,10 +192,10 @@ export class Cpu implements ICpu {
   private read(address: number): number {
     if (address < 0x8000) {
       return this.dataRom[address]
-    } else if (address < 0xf000) {
-      return this.dataRam[address & 0x7fff]
     } else if (address < 0xf800) {
-      return this.ioRam[address & 0x07ff]
+      return this.dataRam[address & 0x7fff]
+    } else if (address < 0xfc00) {
+      return this.ioRam[address & 0x03ff]
     } else {
       throw new Error('Tried to read address out of bounds ' + address)
     }
@@ -204,10 +204,10 @@ export class Cpu implements ICpu {
   private write(address: number, value: number): void {
     if (address < 0x8000) {
       this.dataRom[address] = value
-    } else if (address < 0xf000) {
-      this.dataRam[address & 0x7fff] = value
     } else if (address < 0xf800) {
-      this.ioRam[address & 0x07ff] = value
+      this.dataRam[address & 0x7fff] = value
+    } else if (address < 0xfc00) {
+      this.ioRam[address & 0x03ff] = value
     } else {
       throw new Error('Tried to read address out of bounds ' + address)
     }
