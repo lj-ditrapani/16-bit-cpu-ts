@@ -1,8 +1,25 @@
+/**
+ * A 16-bit LJD cpu
+ */
 export interface ICpu {
+  /**
+   * Runs the cpu for n clocks.  Executes one instruction per clock tick.
+   *
+   * @param n The number of clock cycles to execute.
+   * @return The ioRam buffer that was updated.
+   */
   run(n: number): Uint16Array
+
+  /**
+   * Execute a single cpu instruction.  This method is called iteratively by run.
+   */
   step(): void
 }
 
+/**
+ * @param programRom Array of 16-bit numbers, up to 64 * 1024 elements in array
+ * @param dataRom Array of 16-bit numbers, up to 32 * 1024 elements in array
+ */
 export const makeCpu = (programRom: number[], dataRom: number[]): Cpu => {
   ensureMaxLength(programRom, 64 * 1024, 'programRom')
   ensureMaxLength(dataRom, 32 * 1024, 'dataRom')
