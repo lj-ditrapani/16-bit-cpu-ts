@@ -71,25 +71,39 @@ export class Cpu implements ICpu {
         return false
       }
       case 'add':
-        this.registers[instruction.destinationRegister] =
-          this.registers[instruction.sourceRegister1] +
-          this.registers[instruction.sourceRegister2]
+        this.basicAdd(
+          this.registers[instruction.sourceRegister1],
+          this.registers[instruction.sourceRegister2],
+          0,
+          instruction.destinationRegister
+        )
         this.instructionCounter += 1
         return false
       case 'sub':
-        this.registers[instruction.destinationRegister] =
-          this.registers[instruction.sourceRegister1] -
-          this.registers[instruction.sourceRegister2]
+        this.basicAdd(
+          this.registers[instruction.sourceRegister1],
+          ~this.registers[instruction.sourceRegister2],
+          1,
+          instruction.destinationRegister
+        )
         this.instructionCounter += 1
         return false
       case 'adi':
-        this.registers[instruction.destinationRegister] =
-          this.registers[instruction.sourceRegister1] + instruction.sourceRegister2
+        this.basicAdd(
+          this.registers[instruction.sourceRegister1],
+          instruction.sourceRegister2,
+          0,
+          instruction.destinationRegister
+        )
         this.instructionCounter += 1
         return false
       case 'sbi':
-        this.registers[instruction.destinationRegister] =
-          this.registers[instruction.sourceRegister1] - instruction.sourceRegister2
+        this.basicAdd(
+          this.registers[instruction.sourceRegister1],
+          ~instruction.sourceRegister2,
+          1,
+          instruction.destinationRegister
+        )
         this.instructionCounter += 1
         return false
       case 'and':
@@ -186,6 +200,13 @@ export class Cpu implements ICpu {
     } else {
       throw new Error('Tried to read address out of bounds ' + address)
     }
+  }
+
+  private basicAdd(a: number, b: number, c: number, rd: number): void {
+    const sum = a + b + c
+    this.carryFlag = sum >= 65536 ? 1 : 0
+    // overflow = BitUtils.hasOverflowedOnAdd(a, b, char_sum)
+    this.registers[rd] = sum
   }
 }
 
@@ -326,6 +347,7 @@ const getNibbles = (word: number): [number, number, number, number] => [
   (word >> 4) & 0xf,
   word & 0xf
 ]
+
 const opCode2Instruction: Array<(a: number, b: number, c: number) => Instruction> = [
   (_a, _b, _c) => end,
   (a, b, c) => new LoadByteInstruction('hby', a, b, c),
