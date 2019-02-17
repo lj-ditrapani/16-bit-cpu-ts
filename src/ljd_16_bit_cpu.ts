@@ -8,6 +8,8 @@ export class Cpu implements ICpu {
   private registers = new Uint16Array(16)
   private readonly instructions: Instruction[]
   private ioRamBuffer: Uint16Array
+  // private overflowFlag: number = 0
+  private carryFlag: number = 0
 
   constructor(
     private readonly programRom: Uint16Array,
@@ -106,12 +108,20 @@ export class Cpu implements ICpu {
           instruction.sourceRegister1
         ]
         return false
-      case 'shf':
+      case 'shf': {
+        const value = this.registers[instruction.sourceRegister1]
+        this.carryFlag = getShiftCarry(value, instruction.direction, instruction.amount)
+        this.registers[instruction.destinationRegister] =
+          instruction.direction === 'left'
+            ? (value << instruction.amount) & 0xffff
+            : value >> instruction.amount
         return false
+      }
       case 'brv':
         return false
       case 'brf':
-        return false
+        return !!this.carryFlag
+      // return false
     }
   }
 
@@ -140,6 +150,16 @@ export class Cpu implements ICpu {
   }
 }
 
+const getShiftCarry = (
+  value: number,
+  direction: 'left' | 'right',
+  amount: number
+): number => {
+  const position = direction === 'left' ? 16 - amount : amount - 1
+  const mask = 1 << position
+  return (value & mask) >> position
+}
+
 const ensure = (flag: boolean, message: string): void => {
   if (!flag) {
     throw new Error('Invalid argument: ' + message)
@@ -150,7 +170,16 @@ const ensureLength = (array: Uint16Array, length: number, name: string): void =>
   ensure(array.length === length, `${name} length must be ${length}`)
 }
 
-type Instruction = End | LoadByteInstruction | Lod | Str | Nibbles3Instruction | Not
+type Instruction =
+  | End
+  | LoadByteInstruction
+  | Lod
+  | Str
+  | Nibbles3Instruction
+  | Not
+  | Shf
+  | Brv
+  | Brf
 
 class End {
   public readonly name: 'end' = 'end'
@@ -189,17 +218,7 @@ class Str {
   ) {}
 }
 
-type instructionsWith3Nibbles =
-  | 'add'
-  | 'sub'
-  | 'adi'
-  | 'sbi'
-  | 'and'
-  | 'orr'
-  | 'xor'
-  | 'shf'
-  | 'brv'
-  | 'brf'
+type instructionsWith3Nibbles = 'add' | 'sub' | 'adi' | 'sbi' | 'and' | 'orr' | 'xor'
 
 class Nibbles3Instruction {
   constructor(
@@ -215,6 +234,40 @@ class Not {
 
   constructor(
     public readonly sourceRegister1: number,
+    public readonly destinationRegister: number
+  ) {}
+}
+
+class Shf {
+  public readonly name: 'shf' = 'shf'
+  public readonly direction: 'left' | 'right'
+  public readonly amount: number
+
+  constructor(
+    public readonly sourceRegister1: number,
+    sourceRegister2: number,
+    public readonly destinationRegister: number
+  ) {
+    this.direction = sourceRegister2 & 0x8 ? 'right' : 'left'
+    this.amount = sourceRegister2 & 0x7
+  }
+}
+
+class Brv {
+  public readonly name: 'brv' = 'brv'
+
+  constructor(
+    public readonly sourceRegister1: number,
+    public readonly sourceRegister2: number,
+    public readonly destinationRegister: number
+  ) {}
+}
+
+class Brf {
+  public readonly name: 'brf' = 'brf'
+
+  constructor(
+    public readonly sourceRegister2: number,
     public readonly destinationRegister: number
   ) {}
 }
@@ -239,7 +292,7 @@ const opCode2Instruction: Array<(a: number, b: number, c: number) => Instruction
   (a, b, c) => new Nibbles3Instruction('orr', a, b, c),
   (a, b, c) => new Nibbles3Instruction('xor', a, b, c),
   (a, _b, c) => new Not(a, c),
-  (a, b, c) => new Nibbles3Instruction('shf', a, b, c),
-  (a, b, c) => new Nibbles3Instruction('brv', a, b, c),
-  (a, b, c) => new Nibbles3Instruction('brf', a, b, c)
+  (a, b, c) => new Shf(a, b, c),
+  (a, b, c) => new Brv(a, b, c),
+  (_a, b, c) => new Brf(b, c)
 ]
