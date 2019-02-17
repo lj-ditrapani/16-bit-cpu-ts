@@ -6,10 +6,10 @@ export interface ICpu {
 export class Cpu implements ICpu {
   private instructionCounter = 0
   private registers = new Uint16Array(16)
-  private readonly dataRam = new Uint16Array(28 * 1024),
+  private readonly dataRam = new Uint16Array(28 * 1024)
   private readonly instructions: Instruction[]
   private ioRamBuffer: Uint16Array
-  private overflowFlag: number = 0
+  private overflowFlag: boolean = false
   private carryFlag: number = 0
 
   constructor(
@@ -47,26 +47,26 @@ export class Cpu implements ICpu {
         const value = this.registers[instruction.destinationRegister]
         this.registers[instruction.destinationRegister] =
           (instruction.immediate8Bit << 8) | (value | 0x00ff)
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       }
       case 'lby': {
         const value = this.registers[instruction.destinationRegister]
         this.registers[instruction.destinationRegister] =
           (value & 0xff00) | instruction.immediate8Bit
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       }
       case 'lod': {
         const address = this.registers[instruction.sourceRegister1]
         this.registers[instruction.destinationRegister] = this.read(address)
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       }
       case 'str': {
         const address = this.registers[instruction.sourceRegister1]
         this.write(address, this.registers[instruction.sourceRegister2])
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       }
       case 'add':
@@ -76,7 +76,7 @@ export class Cpu implements ICpu {
           0,
           instruction.destinationRegister
         )
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       case 'sub':
         this.basicAdd(
@@ -85,7 +85,7 @@ export class Cpu implements ICpu {
           1,
           instruction.destinationRegister
         )
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       case 'adi':
         this.basicAdd(
@@ -94,7 +94,7 @@ export class Cpu implements ICpu {
           0,
           instruction.destinationRegister
         )
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       case 'sbi':
         this.basicAdd(
@@ -103,31 +103,31 @@ export class Cpu implements ICpu {
           1,
           instruction.destinationRegister
         )
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       case 'and':
         this.registers[instruction.destinationRegister] =
           this.registers[instruction.sourceRegister1] &
           this.registers[instruction.sourceRegister2]
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       case 'orr':
         this.registers[instruction.destinationRegister] =
           this.registers[instruction.sourceRegister1] |
           this.registers[instruction.sourceRegister2]
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       case 'xor':
         this.registers[instruction.destinationRegister] =
           this.registers[instruction.sourceRegister1] ^
           this.registers[instruction.sourceRegister2]
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       case 'not':
         this.registers[instruction.destinationRegister] = ~this.registers[
           instruction.sourceRegister1
         ]
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       case 'shf': {
         const value = this.registers[instruction.sourceRegister1]
@@ -136,7 +136,7 @@ export class Cpu implements ICpu {
           instruction.direction === 'left'
             ? (value << instruction.amount) & 0xffff
             : value >> instruction.amount
-        incInstructionCounter()
+        this.incInstructionCounter()
         return false
       }
       case 'brv': {
@@ -154,7 +154,7 @@ export class Cpu implements ICpu {
         if (jump) {
           this.instructionCounter = instruction.sourceRegister2
         } else {
-          incInstructionCounter()
+          this.incInstructionCounter()
         }
         return false
       }
@@ -170,7 +170,7 @@ export class Cpu implements ICpu {
         if (jump) {
           this.instructionCounter = instruction.sourceRegister2
         } else {
-          incInstructionCounter()
+          this.incInstructionCounter()
         }
         return false
       }
@@ -204,12 +204,15 @@ export class Cpu implements ICpu {
   private basicAdd(a: number, b: number, c: number, rd: number): void {
     const sum = a + b + c
     this.carryFlag = sum >= 65536 ? 1 : 0
-    // overflow = BitUtils.hasOverflowedOnAdd(a, b, char_sum)
-    this.registers[rd] = sum
+    const sum16Bit = sum & 0xffff
+    this.overflowFlag =
+      (isNegative(a) && isNegative(b) && isPositiveOrZero(sum)) ||
+      (isPositiveOrZero(a) && isPositiveOrZero(b) && isNegative(sum))
+    this.registers[rd] = sum16Bit
   }
 
   private incInstructionCounter(): void {
-    this.instructionCounter = (this.instructionCounter + 1) & 0xFFFF
+    this.instructionCounter = (this.instructionCounter + 1) & 0xffff
   }
 }
 
@@ -232,6 +235,12 @@ const ensure = (flag: boolean, message: string): void => {
 const ensureLength = (array: Uint16Array, length: number, name: string): void => {
   ensure(array.length === length, `${name} length must be ${length}`)
 }
+
+const isPositiveOrZero = (word: number): boolean => word < 32768
+
+const isNegative = (word: number): boolean => word >= 32768
+
+// const isTruePositive = (word: number): boolean => word !== 0 && isPositiveOrZero(word)
 
 type Instruction =
   | End
