@@ -1,6 +1,7 @@
 export interface ICpu {
   run(n: number): void
   step(): void
+  swapIoRam(): void
 }
 
 export class Cpu implements ICpu {
@@ -8,25 +9,36 @@ export class Cpu implements ICpu {
   private registers = new Uint16Array(16)
   private readonly dataRam = new Uint16Array(28 * 1024)
   private readonly instructions: Instruction[]
-  private ioRamBuffer: Uint16Array
+  private ioRam: Uint16Array
   private overflowFlag: boolean = false
   private carryFlag: number = 0
+  private activeBuffer: 1 | 2 = 1
 
   constructor(
     private readonly programRom: Uint16Array,
     private readonly dataRom: Uint16Array,
-    private readonly ioRamBuffer1: Uint16Array,
-    private readonly ioRamBuffer2: Uint16Array
+    private readonly ioRam1: Uint16Array,
+    private readonly ioRam2: Uint16Array
   ) {
     ensureLength(this.programRom, 64 * 1024, 'programRom')
     ensureLength(this.dataRom, 32 * 1024, 'dataRom')
-    ensureLength(this.ioRamBuffer1, 2 * 1024, 'ioRamBuffer1')
-    ensureLength(this.ioRamBuffer2, 2 * 1024, 'ioRamBuffer2')
+    ensureLength(this.ioRam1, 2 * 1024, 'ioRam1')
+    ensureLength(this.ioRam2, 2 * 1024, 'ioRam2')
     this.instructions = Array.from(programRom).map(word => {
       const [opCode, a, b, c] = getNibbles(word)
       return opCode2Instruction[opCode](a, b, c)
     })
-    this.ioRamBuffer = ioRamBuffer1
+    this.ioRam = ioRam1
+  }
+
+  public swapIoRam(): void {
+    if (this.activeBuffer === 1) {
+      this.activeBuffer = 2
+      this.ioRam = this.ioRam2
+    } else {
+      this.activeBuffer = 1
+      this.ioRam = this.ioRam1
+    }
   }
 
   public run(n: number): void {
@@ -183,7 +195,7 @@ export class Cpu implements ICpu {
     } else if (address < 0xf000) {
       return this.dataRam[address & 0x7fff]
     } else if (address < 0xf800) {
-      return this.ioRamBuffer[address & 0x07ff]
+      return this.ioRam[address & 0x07ff]
     } else {
       throw new Error('Tried to read address out of bounds ' + address)
     }
@@ -195,7 +207,7 @@ export class Cpu implements ICpu {
     } else if (address < 0xf000) {
       this.dataRam[address & 0x7fff] = value
     } else if (address < 0xf800) {
-      this.ioRamBuffer[address & 0x07ff] = value
+      this.ioRam[address & 0x07ff] = value
     } else {
       throw new Error('Tried to read address out of bounds ' + address)
     }
