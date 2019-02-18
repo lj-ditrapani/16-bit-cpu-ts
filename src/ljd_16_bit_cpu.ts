@@ -75,6 +75,7 @@ export class Cpu implements ICpu {
   public run(n: number): Uint16Array {
     this.instructionCounter = this.ioRam[0]
     while (n > 0) {
+      --n
       const done = this.step()
       if (done) {
         break
@@ -195,19 +196,19 @@ export class Cpu implements ICpu {
         return false
       }
       case 'brv': {
-        const value = instruction.sourceRegister1
+        const value = this.registers[instruction.sourceRegister1]
         let jump: boolean = false
         if (instruction.negative && isNegative(value)) {
           jump = true
         } else if (instruction.zero && value === 0) {
           jump = true
-        } else if (instruction.positive && value !== 0 && isPositive(value)) {
+        } else if (instruction.positive && value !== 0 && isPositiveOrZero(value)) {
           jump = true
         } else {
           jump = false
         }
         if (jump) {
-          this.instructionCounter = instruction.sourceRegister2
+          this.instructionCounter = this.registers[instruction.sourceRegister2]
         } else {
           this.incInstructionCounter()
         }
@@ -262,8 +263,8 @@ export class Cpu implements ICpu {
     this.carryFlag = sum >= 65536
     const sum16Bit = sum & 0xffff
     this.overflowFlag =
-      (isNegative(a) && isNegative(b) && isPositive(sum)) ||
-      (isPositive(a) && isPositive(b) && isNegative(sum))
+      (isNegative(a) && isNegative(b) && isPositiveOrZero(sum)) ||
+      (isPositiveOrZero(a) && isPositiveOrZero(b) && isNegative(sum))
     this.registers[rd] = sum16Bit
   }
 
@@ -426,7 +427,7 @@ const getShiftCarry = (
   return (value & mask) > 0
 }
 
-const isPositive = (word: number): boolean => word < 32768
+const isPositiveOrZero = (word: number): boolean => word < 32768
 
 const isNegative = (word: number): boolean => word >= 32768
 
