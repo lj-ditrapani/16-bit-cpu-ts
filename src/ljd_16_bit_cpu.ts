@@ -224,7 +224,7 @@ export class Cpu implements ICpu {
           jump = false
         }
         if (jump) {
-          this.instructionCounter = instruction.sourceRegister2
+          this.instructionCounter = this.registers[instruction.sourceRegister2]
         } else {
           this.incInstructionCounter()
         }
