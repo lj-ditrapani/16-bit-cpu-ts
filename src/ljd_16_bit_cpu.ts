@@ -352,7 +352,7 @@ class Shf {
     public readonly destinationRegister: number
   ) {
     this.direction = sourceRegister2 & 0x8 ? 'right' : 'left'
-    this.amount = sourceRegister2 & 0x7
+    this.amount = (sourceRegister2 & 0x7) + 1
   }
 }
 
