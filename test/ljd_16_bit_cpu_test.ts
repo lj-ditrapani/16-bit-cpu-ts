@@ -96,22 +96,22 @@ describe('Cpu', () => {
     assert.equal(cpu.instructionCounter, 21)
   })
 
-  it('runs a program with a while loop that outputs 0xDOA8 (#{0xD0A8}) and PC = 16', () => {
+  it(`runs a program with a while loop that outputs 0xDOA8 (${0xd0a8}) and PC = 16`, () => {
     /* Run a complete program
-     * Uses storage I/O
-     * - input/read $E800
-     * - output/write $EC00
+     * Uses storage input & video output
+     * - input/read $F884 (linkHub/disk)
+     * - output/write $FBFF (last video cell)
      * Input: n followed by a list of n integers
      * Output: -2 * sum(list of n integers)
      */
     const program = [
       // R0 gets address of beginning of input from storage space
-      0x1e80, // 0 HBY 0xE8 R0       0xE8 -> Upper(R0)
-      0x2000, // 1 LBY 0x00 R0       0x00 -> Lower(R0)
+      0x1f80, // 0 HBY 0xF8 R0       0xF8 -> Upper(R0)
+      0x2840, // 1 LBY 0x84 R0       0x84 -> Lower(R0)
 
-      // R1 gets address of begining of output to storage space
-      0x1ec1, // 2 HBY 0xEC R1       0xEC -> Upper(R1)
-      0x2001, // 3 LBY 0x00 R1       0x00 -> Lower(R1)
+      // R1 gets address of end of video ram
+      0x1fb1, // 2 HBY 0xFB R1       0xFB -> Upper(R1)
+      0x2ff1, // 3 LBY 0xFF R1       0xFF -> Lower(R1)
 
       // R2 gets n, the count of how many input values to sum
       0x3002, // 4 LOD R0 R2         First Input (count n) -> R2
@@ -147,25 +147,24 @@ describe('Cpu', () => {
         yield 10 + i
       }
     }
-    const data = Array.from(makeData())
-    // const data = Array.from(Array(101).keys()).map(x => x + 10)
-    const cpuWithIoRam = makeDebugCpu(program, data)
+    const cpuWithIoRam = makeDebugCpu(program, [])
     const cpu = cpuWithIoRam.cpu
-    const ioRam = cpu.run(200)
-    assert.equal(ioRam[512], 0x005a)
+    const ioRam2 = cpuWithIoRam.ioRam
+    ioRam2.set([...makeData()], 0x84)
+    cpu.run(0) // swap ioRam buffers
+    const ioRam = cpu.run(2048)
 
     /* n = length(10..110) = 101
-     * sum(10..110) = 6060
+     * sum(10..110) = 6060 = 0x17AC
+     * 2 * 6060 = 12120 = 0x2F58
      * -2 * 6060 = -12120
      * 16-bit hex(+12120) = 0x2F58
      * 16-bit hex(-12120) = 0xD0A8
      */
-    /*
-    computer2.ram(0xE800).toInt shouldBe 101
-    computer2.ram(0xE801).toInt shouldBe 10
-    computer2.ram(0xE800 + 101).toInt shouldBe 110
-    computer2.ram(0xEC00).toInt shouldBe 0xD0A8
-       */
+    assert.equal(ioRam[0x84], 101)
+    assert.equal(ioRam[0x84 + 1], 10)
+    assert.equal(ioRam[0x84 + 101], 110)
+    assert.equal(ioRam[1023], 0xd0a8)
     assert.equal(cpu.instructionCounter, 16)
   })
 })
