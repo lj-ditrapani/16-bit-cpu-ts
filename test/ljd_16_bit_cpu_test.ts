@@ -95,4 +95,77 @@ describe('Cpu', () => {
     )
     assert.equal(cpu.instructionCounter, 21)
   })
+
+  it('runs a program with a while loop that outputs 0xDOA8 (#{0xD0A8}) and PC = 16', () => {
+    /* Run a complete program
+     * Uses storage I/O
+     * - input/read $E800
+     * - output/write $EC00
+     * Input: n followed by a list of n integers
+     * Output: -2 * sum(list of n integers)
+     */
+    const program = [
+      // R0 gets address of beginning of input from storage space
+      0x1e80, // 0 HBY 0xE8 R0       0xE8 -> Upper(R0)
+      0x2000, // 1 LBY 0x00 R0       0x00 -> Lower(R0)
+
+      // R1 gets address of begining of output to storage space
+      0x1ec1, // 2 HBY 0xEC R1       0xEC -> Upper(R1)
+      0x2001, // 3 LBY 0x00 R1       0x00 -> Lower(R1)
+
+      // R2 gets n, the count of how many input values to sum
+      0x3002, // 4 LOD R0 R2         First Input (count n) -> R2
+
+      // R3 and R4 have start and end of while loop respectively
+      0x2073, // 5 LBY 0x07 R3       addr start of while loop -> R3
+      0x20d4, // 6 LBY 0x0D R4       addr to end while loop -> R4
+
+      // Start of while loop
+      0xe242, // 7 BRV R2 R4 Z       if R2 is zero (0x.... -> PC)
+      0x7010, // 8 ADI R0 1 R0       increment input address
+      0x3006, // 9 LOD R0 R6         Next Input -> R6
+      0x5565, // A ADD R5 R6 R5      R5 + R6 (running sum) -> R5
+      0x8212, // B SBI R2 1 R2       R2 - 1 -> R2
+      0xe037, // C BRV R0 R3 NZP     0x.... -> PC (unconditional)
+
+      // End of while loop
+      0xd506, // D SHF R5 left 1 R6  Double sum
+
+      // Negate double of sum
+      0x6767, // E SUB R7 R6 R7      0 - R6 -> R7
+
+      // Output result
+      0x4170, // F STR R1 R7         Output value of R7
+      0x0000 //   END
+    ]
+
+    const length = 101
+
+    function* makeData() {
+      yield length
+      for (let i = 0; i < length; i++) {
+        yield 10 + i
+      }
+    }
+    const data = Array.from(makeData())
+    // const data = Array.from(Array(101).keys()).map(x => x + 10)
+    const cpuWithIoRam = makeDebugCpu(program, data)
+    const cpu = cpuWithIoRam.cpu
+    const ioRam = cpu.run(200)
+    assert.equal(ioRam[512], 0x005a)
+
+    /* n = length(10..110) = 101
+     * sum(10..110) = 6060
+     * -2 * 6060 = -12120
+     * 16-bit hex(+12120) = 0x2F58
+     * 16-bit hex(-12120) = 0xD0A8
+     */
+    /*
+    computer2.ram(0xE800).toInt shouldBe 101
+    computer2.ram(0xE801).toInt shouldBe 10
+    computer2.ram(0xE800 + 101).toInt shouldBe 110
+    computer2.ram(0xEC00).toInt shouldBe 0xD0A8
+       */
+    assert.equal(cpu.instructionCounter, 16)
+  })
 })
