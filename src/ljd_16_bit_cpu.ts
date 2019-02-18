@@ -11,18 +11,13 @@ export interface ICpu {
   run(n: number): Uint16Array
 }
 
-export interface ICpuWithIoRams {
+export interface ICpuWithIoRam {
   readonly cpu: ICpu
-  readonly ioRam1: Uint16Array
-  readonly ioRam2: Uint16Array
+  readonly ioRam: Uint16Array
 }
 
-export class CpuWithIoRams {
-  constructor(
-    public readonly cpu: Cpu,
-    public readonly ioRam1: Uint16Array,
-    public readonly ioRam2: Uint16Array
-  ) {}
+export class CpuWithIoRam {
+  constructor(public readonly cpu: Cpu, public readonly ioRam: Uint16Array) {}
 }
 
 /**
@@ -31,7 +26,7 @@ export class CpuWithIoRams {
  * @param programRom Array of 16-bit numbers, up to 64 * 1024 elements in array
  * @param dataRom Array of 16-bit numbers, up to 32 * 1024 elements in array
  */
-export const makeCpu = (programRom: number[], dataRom: number[]): ICpuWithIoRams =>
+export const makeCpu = (programRom: number[], dataRom: number[]): ICpuWithIoRam =>
   makeDebugCpu(programRom, dataRom)
 
 /**
@@ -40,7 +35,7 @@ export const makeCpu = (programRom: number[], dataRom: number[]): ICpuWithIoRams
  * @param programRom Array of 16-bit numbers, up to 64 * 1024 elements in array
  * @param dataRom Array of 16-bit numbers, up to 32 * 1024 elements in array
  */
-export const makeDebugCpu = (programRom: number[], dataRom: number[]): CpuWithIoRams => {
+export const makeDebugCpu = (programRom: number[], dataRom: number[]): CpuWithIoRam => {
   ensureMaxLength(programRom, 64 * 1024, 'programRom')
   ensureMaxLength(dataRom, 32 * 1024, 'dataRom')
   const pRom = new Uint16Array(64 * 1024)
@@ -49,7 +44,7 @@ export const makeDebugCpu = (programRom: number[], dataRom: number[]): CpuWithIo
   dRom.set(dataRom)
   const ioRam1: Uint16Array = new Uint16Array(1 * 1024)
   const ioRam2: Uint16Array = new Uint16Array(1 * 1024)
-  return new CpuWithIoRams(new Cpu(pRom, dRom, ioRam1, ioRam2), ioRam1, ioRam2)
+  return new CpuWithIoRam(new Cpu(pRom, dRom, ioRam1, ioRam2), ioRam2)
 }
 
 export class Cpu implements ICpu {
@@ -106,7 +101,7 @@ export class Cpu implements ICpu {
       case 'hby': {
         const value = this.registers[instruction.destinationRegister]
         this.registers[instruction.destinationRegister] =
-          (instruction.immediate8Bit << 8) | (value | 0x00ff)
+          (instruction.immediate8Bit << 8) | (value & 0x00ff)
         this.incInstructionCounter()
         return false
       }
@@ -252,12 +247,13 @@ export class Cpu implements ICpu {
   private write(address: number, value: number): void {
     if (address < 0x8000) {
       this.dataRom[address] = value
+      throw new Error('LJD Cpu: Tried to write into data ROM @ ' + address)
     } else if (address < 0xf800) {
       this.dataRam[address & 0x7fff] = value
     } else if (address < 0xfc00) {
       this.ioRam[address & 0x03ff] = value
     } else {
-      throw new Error('Tried to read address out of bounds ' + address)
+      throw new Error('LJD Cpu: Tried to write memory address out of bounds ' + address)
     }
   }
 
