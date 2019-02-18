@@ -53,7 +53,6 @@ export const makeDebugCpu = (programRom: number[], dataRom: number[]): CpuWithIo
 }
 
 export class Cpu implements ICpu {
-  private static readonly frameInterruptVector = 0xf800
   public overflowFlag: boolean = false
   public carryFlag: boolean = false
   public instructionCounter = 0
@@ -79,6 +78,7 @@ export class Cpu implements ICpu {
   }
 
   public run(n: number): Uint16Array {
+    this.instructionCounter = this.ioRam[0]
     while (n > 0) {
       const done = this.step()
       if (done) {
@@ -86,12 +86,12 @@ export class Cpu implements ICpu {
       }
     }
     if (this.activeBuffer === 1) {
-      this.ioRam2[Cpu.frameInterruptVector] = this.ioRam1[Cpu.frameInterruptVector]
+      this.ioRam2[0] = this.ioRam1[0]
       this.activeBuffer = 2
       this.ioRam = this.ioRam2
       return this.ioRam1
     } else {
-      this.ioRam1[Cpu.frameInterruptVector] = this.ioRam2[Cpu.frameInterruptVector]
+      this.ioRam1[0] = this.ioRam2[0]
       this.activeBuffer = 1
       this.ioRam = this.ioRam1
       return this.ioRam2
