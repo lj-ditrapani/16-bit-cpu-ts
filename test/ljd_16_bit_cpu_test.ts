@@ -15,8 +15,8 @@ describe('Cpu', () => {
       0x4a20 // Store mem($FA00) = R2
     ]
     const data = [0x0014, 0x0046]
-    const cpu = makeCpu(program, data)
-    const ioRam = cpu.run(20)
+    const cpuWithIoRams = makeCpu(program, data)
+    const ioRam = cpuWithIoRams.cpu.run(20)
     assert.equal(ioRam[512], 0x005a)
   })
 })

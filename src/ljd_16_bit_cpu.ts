@@ -9,11 +9,20 @@ export interface ICpu {
    * @return The ioRam buffer that was updated.
    */
   run(n: number): Uint16Array
+}
 
-  /**
-   * Execute a single cpu instruction.  This method is called iteratively by run.
-   */
-  step(): void
+export interface ICpuWithIoRams {
+  readonly cpu: ICpu
+  readonly ioRam1: Uint16Array
+  readonly ioRam2: Uint16Array
+}
+
+export class CpuWithIoRams {
+  constructor(
+    public readonly cpu: Cpu,
+    public readonly ioRam1: Uint16Array,
+    public readonly ioRam2: Uint16Array
+  ) {}
 }
 
 /**
@@ -22,7 +31,7 @@ export interface ICpu {
  * @param programRom Array of 16-bit numbers, up to 64 * 1024 elements in array
  * @param dataRom Array of 16-bit numbers, up to 32 * 1024 elements in array
  */
-export const makeCpu = (programRom: number[], dataRom: number[]): ICpu =>
+export const makeCpu = (programRom: number[], dataRom: number[]): ICpuWithIoRams =>
   makeDebugCpu(programRom, dataRom)
 
 /**
@@ -31,14 +40,16 @@ export const makeCpu = (programRom: number[], dataRom: number[]): ICpu =>
  * @param programRom Array of 16-bit numbers, up to 64 * 1024 elements in array
  * @param dataRom Array of 16-bit numbers, up to 32 * 1024 elements in array
  */
-export const makeDebugCpu = (programRom: number[], dataRom: number[]): Cpu => {
+export const makeDebugCpu = (programRom: number[], dataRom: number[]): CpuWithIoRams => {
   ensureMaxLength(programRom, 64 * 1024, 'programRom')
   ensureMaxLength(dataRom, 32 * 1024, 'dataRom')
   const pRom = new Uint16Array(64 * 1024)
   pRom.set(programRom)
   const dRom = new Uint16Array(32 * 1024)
   dRom.set(dataRom)
-  return new Cpu(pRom, dRom)
+  const ioRam1: Uint16Array = new Uint16Array(1 * 1024)
+  const ioRam2: Uint16Array = new Uint16Array(1 * 1024)
+  return new CpuWithIoRams(new Cpu(pRom, dRom, ioRam1, ioRam2), ioRam1, ioRam2)
 }
 
 export class Cpu implements ICpu {
@@ -50,18 +61,21 @@ export class Cpu implements ICpu {
   public readonly dataRam = new Uint16Array(30 * 1024)
   public ioRam: Uint16Array
   private readonly instructions: Instruction[]
-  private readonly ioRam1: Uint16Array = new Uint16Array(1 * 1024)
-  private readonly ioRam2: Uint16Array = new Uint16Array(1 * 1024)
   private activeBuffer: 1 | 2 = 1
 
-  constructor(programRom: Uint16Array, private readonly dataRom: Uint16Array) {
+  constructor(
+    programRom: Uint16Array,
+    private readonly dataRom: Uint16Array,
+    private readonly ioRam1: Uint16Array,
+    private readonly ioRam2: Uint16Array
+  ) {
     ensureLength(programRom, 64 * 1024, 'programRom')
     ensureLength(dataRom, 32 * 1024, 'dataRom')
     this.instructions = Array.from(programRom).map(word => {
       const [opCode, a, b, c] = getNibbles(word)
       return opCode2Instruction[opCode](a, b, c)
     })
-    this.ioRam = this.ioRam1
+    this.ioRam = ioRam1
   }
 
   public run(n: number): Uint16Array {
