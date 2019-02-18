@@ -17,10 +17,21 @@ export interface ICpu {
 }
 
 /**
+ * Returns an ICpu suitable for emulating an ljd 16-bit cpu
+ *
  * @param programRom Array of 16-bit numbers, up to 64 * 1024 elements in array
  * @param dataRom Array of 16-bit numbers, up to 32 * 1024 elements in array
  */
-export const makeCpu = (programRom: number[], dataRom: number[]): Cpu => {
+export const makeCpu = (programRom: number[], dataRom: number[]): ICpu =>
+  makeDebugCpu(programRom, dataRom)
+
+/**
+ * Returns an ICpu suitable for debugging a programs.
+ *
+ * @param programRom Array of 16-bit numbers, up to 64 * 1024 elements in array
+ * @param dataRom Array of 16-bit numbers, up to 32 * 1024 elements in array
+ */
+export const makeDebugCpu = (programRom: number[], dataRom: number[]): Cpu => {
   ensureMaxLength(programRom, 64 * 1024, 'programRom')
   ensureMaxLength(dataRom, 32 * 1024, 'dataRom')
   const pRom = new Uint16Array(64 * 1024)
@@ -32,15 +43,15 @@ export const makeCpu = (programRom: number[], dataRom: number[]): Cpu => {
 
 export class Cpu implements ICpu {
   private static readonly frameInterruptVector = 0xf800
-  private overflowFlag: boolean = false
-  private carryFlag: boolean = false
-  private instructionCounter = 0
-  private readonly registers = new Uint16Array(16)
+  public overflowFlag: boolean = false
+  public carryFlag: boolean = false
+  public instructionCounter = 0
+  public readonly registers = new Uint16Array(16)
+  public readonly dataRam = new Uint16Array(30 * 1024)
+  public ioRam: Uint16Array
   private readonly instructions: Instruction[]
-  private readonly dataRam = new Uint16Array(30 * 1024)
   private readonly ioRam1: Uint16Array = new Uint16Array(1 * 1024)
   private readonly ioRam2: Uint16Array = new Uint16Array(1 * 1024)
-  private ioRam: Uint16Array
   private activeBuffer: 1 | 2 = 1
 
   constructor(programRom: Uint16Array, private readonly dataRom: Uint16Array) {
