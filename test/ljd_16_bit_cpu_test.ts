@@ -167,4 +167,78 @@ describe('Cpu', () => {
     assert.equal(ioRam[1023], 0xd0a8)
     assert.equal(cpu.instructionCounter, 16)
   })
+
+  it('runs a program that adds/subtracs/shifts with carries & overflows', () => {
+    /*
+     * load word $4005 in to R0
+     * shf left 2 (causes carry to be set)
+     * store result in $0000 (should get $0014)
+     * BRF C (branch if carry set)
+     * END   (gets skipped over)
+     * 32766 + 1
+     * BRF V to END (does not take branch)
+     * 32767 + 1
+     * BRF V
+     * END   (gets skipped over)
+     * 65534 + 1
+     * BRF C to END (does not take branch)
+     * 65535 + 1
+     * BRF C
+     * END   (gets skipped over)
+     * store $FACE in $0001
+     */
+    const program = [
+      // Shift & branch on carry
+      0x1400, // 00 HBY 0x40 R0       0x40 -> Upper(R0)
+      0x2050, // 01 LBY 0x05 R0       0x05 -> Lower(R0)
+      0xd010, // 02 SHF R0 Left by 2 -> R0 (0x14 + carry)
+      0x180a, // 03 HBY 0x80 RA
+      0x200a, // 04 LBY 0x00 RA
+      0x4a00, // 05 STR R0 -> M[RA]   shifted value -> M[$8000]
+      0x100b, // 06 HBY 0x00 RB       RB = 0x000A
+      0x20ab, // 07 LBY 0x0A RB
+      0xf0b1, // 08 BRF RB C          Jump to 0x000A if carry set
+      0x0000, // 09 END               Gets skipped
+
+      // Add & branch on overflow
+      // R0 = 0x7FFE
+      0x17f0, // 0A HBY 0x7F R0       0x7F -> Upper(R0)
+      0x2fe0, // 0B LBY 0xFE R0       0xFE -> Lower(R0)
+      0x7010, // 0C ADI R0 1 R0       R0 = 0x7FFE + 1
+      0x209b, // 0D LBY 0x09 RB       RB = 0x0009
+      0xf0b2, // 0E BRF RB V          Do not jump, overflow not set
+      0x7010, // 0F ADI R0 1 R0       R0 = 0x7FFF + 1
+      0x213b, // 10 LBY 0x13 RB       RB = 0x0013
+      0xf0b2, // 11 BRF RB V          Jump
+      0x0000, // 12 END               Gets skipped
+
+      // Add & branch on carry
+      // R0 = 0xFFFE
+      0x1ff0, // 13 HBY 0xFF R0       0xFF -> Upper(R0)
+      0x2fe0, // 14 LBY 0xFE R0       0xFE -> Lower(R0)
+      0x7010, // 15 ADI R0 1 R0       R0 = 0xFFFE + 1
+      0x209b, // 16 LBY 0x09 RB       RA = 0x0009
+      0xf0b1, // 17 BRF RB C          Do not Jump to 0x0009; carry not set
+      0x7010, // 18 ADI R0 1 R0       R0 = 0xFFFF + 1
+      0x21cb, // 19 LBY 0x1C RB       RB = 0x001C
+      0xf0b1, // 1A BRF RB C          Jump to 0x001B if carry set
+      0x0000, // 1B END               Gets skipped
+      // R0 = 0xFACE
+      0x1fa0, // 1C HBY 0xFA R0
+      0x2ce0, // 1D LBY 0xCE R0
+      0x201a, // 1E LBY 0x01 RA       RA = 0x8001
+      0x4a00, // 1F STR R0 -> M[RA]   0xFACE -> M[$8001]
+      0x0000 // 20 END
+    ]
+
+    const cpuWithIoRam = makeDebugCpu(program, [])
+    const cpu = cpuWithIoRam.cpu
+    cpu.run(40)
+
+    // assert.equal(cpu.instructionCounter, 0x0020)
+    assert.equal(cpu.registers[0], 0xface)
+    assert.equal(cpu.registers[0xa], 0x8001)
+    assert.equal(cpu.dataRam[0x0000], 0x0014)
+    assert.equal(cpu.dataRam[0x0001], 0xface)
+  })
 })
