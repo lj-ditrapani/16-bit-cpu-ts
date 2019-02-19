@@ -241,4 +241,54 @@ describe('Cpu', () => {
     assert.equal(cpu.dataRam[0x0000], 0x0014)
     assert.equal(cpu.dataRam[0x0001], 0xface)
   })
+
+  it('runs a program that uses ORR, XOR and NOT instructions', () => {
+    const program = [
+      0x1891, // 0x8925 -> R1
+      0x2251,
+      0x1812, // 0x8119 -> R2
+      0x2192,
+      0xb122, // 0x8925 XOR 0x8119 -> R2 = 0x083C
+      0x1481, // 0x4811 -> R1
+      0x2111,
+      0xa123, // 0x4811 ORR 0x083C -> R3 = 0x483D
+      0xc304, // NOT 0x483D -> R4 = B7C2
+      0x180a, // $8000 -> RA (first data RAM address)
+      0x200a,
+      0x4a20, // STR $083C -> mem[$8000]
+      0x7a1a, // ADI RA + 1 = $8001
+      0x4a30, // STR $483D -> mem[$8001]
+      0x7a1a, // ADI RA + 1 = $8002
+      0x4a40, // STR $B7C2 -> mem[$8002]
+      0x0000
+    ]
+
+    const cpuWithIoRam = makeDebugCpu(program, [])
+    const cpu = cpuWithIoRam.cpu
+    cpu.run(40)
+    assert.deepEqual(
+      cpu.registers,
+      Uint16Array.of(
+        0,
+        0x4811,
+        0x083c,
+        0x483d,
+        0xb7c2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0x8002,
+        0,
+        0,
+        0,
+        0,
+        0
+      )
+    )
+    assert.equal(cpu.dataRam[0], 0x083c)
+    assert.equal(cpu.dataRam[1], 0x483d)
+    assert.equal(cpu.dataRam[2], 0xb7c2)
+  })
 })
