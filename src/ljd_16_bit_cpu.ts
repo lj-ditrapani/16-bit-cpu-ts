@@ -247,7 +247,6 @@ export class Cpu implements ICpu {
 
   private write(address: number, value: number): void {
     if (address < 0x8000) {
-      this.dataRom[address] = value
       throw new Error('LJD Cpu: Tried to write into data ROM @ ' + address)
     } else if (address < 0xf800) {
       this.dataRam[address & 0x7fff] = value
