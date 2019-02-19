@@ -241,7 +241,9 @@ export class Cpu implements ICpu {
     } else if (address < 0xfc00) {
       return this.ioRam[address & 0x03ff]
     } else {
-      throw new Error('Tried to read address out of bounds ' + address)
+      throw new Error(
+        'LJD Cpu: Tried to read from a memory address out of bounds ' + address
+      )
     }
   }
 
@@ -253,7 +255,9 @@ export class Cpu implements ICpu {
     } else if (address < 0xfc00) {
       this.ioRam[address & 0x03ff] = value
     } else {
-      throw new Error('LJD Cpu: Tried to write memory address out of bounds ' + address)
+      throw new Error(
+        'LJD Cpu: Tried to write to a memory address out of bounds ' + address
+      )
     }
   }
 

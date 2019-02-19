@@ -284,4 +284,50 @@ describe('Cpu', () => {
     assert.equal(cpu.dataRam[2], 0xb7c2)
     assert.equal(cpu.dataRam[3], 0x8242)
   })
+
+  it('throws if a program tries to write to dataRom', () => {
+    const program = [
+      0x1001, // $0005 -> R1
+      0x2051,
+      0x100a, // $0000 -> RA
+      0x200a,
+      0x4a10, // STR $0005 -> mem[$0000] (begining of data ROM)
+      0x0000
+    ]
+    const cpuWithIoRam = makeDebugCpu(program, [])
+    const cpu = cpuWithIoRam.cpu
+    assert.throws(() => cpu.run(10), /LJD Cpu: Tried to write into data ROM @ 0/)
+  })
+
+  it('throws if a program tries to read from last 1024 words in memory address', () => {
+    const program = [
+      0x1fca, // $fc00 -> RA
+      0x200a,
+      0x3a01, // LOD mem[$fc00] -> R1 (begining illegal space after ioRam)
+      0x0000
+    ]
+    const cpuWithIoRam = makeDebugCpu(program, [])
+    const cpu = cpuWithIoRam.cpu
+    assert.throws(
+      () => cpu.run(10),
+      /LJD Cpu: Tried to read from a memory address out of bounds 64512/
+    )
+  })
+
+  it('throws if a program tries to write into last 1024 words in memory address', () => {
+    const program = [
+      0x1001, // $0005 -> R1
+      0x2051,
+      0x1fca, // $fc00 -> RA
+      0x200a,
+      0x4a10, // STR $0005 -> mem[$fc00] (begining illegal space after ioRam)
+      0x0000
+    ]
+    const cpuWithIoRam = makeDebugCpu(program, [])
+    const cpu = cpuWithIoRam.cpu
+    assert.throws(
+      () => cpu.run(10),
+      /LJD Cpu: Tried to write to a memory address out of bounds 64512/
+    )
+  })
 })
