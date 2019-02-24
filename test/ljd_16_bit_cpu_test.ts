@@ -285,6 +285,45 @@ describe('Cpu', () => {
     assert.equal(cpu.dataRam[3], 0x8242)
   })
 
+  it('runs a program that BRV branches on positive and writes and reads to dataRam', () => {
+    const program = [
+      0x1001, // 00 $0001 -> R1
+      0x2011, // 01
+      0x100a, // 02 $0006 -> RA
+      0x206a, // 03
+      0xe1a1, // 04 BRV branch on positive; skip next
+      0x0000, // 05
+      0x8111, // 06 1 - 1 -> R1 == 0
+      0x216a, // 07 $0014 -> RA
+      0xe1a1, // 08 BRV branch on positive; don't branch
+      0x8111, // 09 0 - 1 -> R1 == -1
+      0x216a, // 0A $0014 -> RA
+      0xe1a1, // 0B BRV branch on positive; don't branch
+      0x180a, // 0C $8000 -> RA
+      0x200a, // 0D
+      0x4a10, // 0E STR -1 -> mem[$8000] (begining of data RAM)
+      0x3a02, // 0F LOD mem[$8000] -> R2
+      0x7222, // 10 ADI -1 + 2 -> R2
+      0x1f7a, // 11 $f7ff -> RA (end of data RAM)
+      0x2ffa, // 12
+      0x4a20, // 13 STR 1 -> mem[$f7ff] (end of data ROM)
+      0x0000 // 14
+    ]
+    const cpuWithIoRam = makeDebugCpu(program, [])
+    const cpu = cpuWithIoRam.cpu
+    cpu.run(25)
+    assert.equal(cpu.dataRam[0], 65535)
+    assert.equal(cpu.dataRam[30 * 1024 - 1], 1)
+  })
+
+  it('throws if the program rom length is > 64 * 1024', () => {
+    const program = Array(64 * 1024 + 1)
+    assert.throws(
+      () => makeCpu(program, []),
+      /Invalid argument: programRom length must be <= 65536/
+    )
+  })
+
   it('throws if a program tries to write to dataRom', () => {
     const program = [
       0x1001, // $0005 -> R1
