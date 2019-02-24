@@ -78,7 +78,9 @@
 				</ul>
 				<p>The processor instruction set architecture (ISA) can be found in
 				<a href="doc/ISA.md">doc/ISA.md</a>.</p>
-				<h2 id="usage">Usage</h2>
+				<h2 id="npm-package">npm package</h2>
+				<p><a href="https://www.npmjs.com/package/ljd-16-bit-cpu">https://www.npmjs.com/package/ljd-16-bit-cpu</a></p>
+				<pre><code>npm <span class="hljs-keyword">install</span> <span class="hljs-comment">--save ljd-16-bit-cpu</span></code></pre><h2 id="usage">Usage</h2>
 				<pre><code class="language-bash">npm install ljd-16-bit-cpu</code></pre>
 				<p>From browser:</p>
 				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"module"</span>&gt;</span><span class="javascript">
@@ -126,17 +128,22 @@ cpu.step()
 				<h2 id="api-documentation">API Documentation</h2>
 				<p><a href="https://lj-ditrapani.github.io/16-bit-cpu-ts/">https://lj-ditrapani.github.io/16-bit-cpu-ts/</a></p>
 				<h2 id="developing">Developing</h2>
-				<p>Lint, run tests and build on node with:</p>
+				<h3 id="format-lint-test-build">Format, lint, test, build</h3>
 				<pre><code class="language-bash">npm run all</code></pre>
 				<p>This produces lib/ljd_16_bit_cpu.js for node environment and browser/ljd_16_bit_cpu.js
 				for browser environments respectively.</p>
+				<h3 id="manual-browser-test">Manual browser test</h3>
 				<p>Run manual test in browser; prints 100 to dev console.</p>
 				<pre><code class="language-bash">npm run browser-test</code></pre>
 				<p>Then open localhost:8000 in your browser.
 				Open the developer console to see the 100.</p>
+				<h3 id="manual-node-test">Manual node test</h3>
 				<p>Run manual test on node; prints 100.</p>
 				<pre><code class="language-bash">node test.js</code></pre>
-				<p>Author:  Lyall Jonathan Di Trapani</p>
+				<h3 id="publish">Publish</h3>
+				<pre><code><span class="hljs-built_in">npm</span> login
+<span class="hljs-built_in">npm</span> version patch/minor/major
+<span class="hljs-built_in">npm</span> publish</code></pre><p>Author:  Lyall Jonathan Di Trapani</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
