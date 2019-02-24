@@ -20,6 +20,14 @@ The processor instruction set architecture (ISA) can be found in
 [doc/ISA.md](doc/ISA.md).
 
 
+npm package
+-----------
+
+<https://www.npmjs.com/package/ljd-16-bit-cpu>
+
+    npm install --save ljd-16-bit-cpu
+
+
 Usage
 -----
 
@@ -100,7 +108,7 @@ API Documentation
 Developing
 ----------
 
-Lint, run tests and build on node with:
+### Format, lint, test, build ###
 
 ```bash
 npm run all
@@ -108,6 +116,9 @@ npm run all
 
 This produces lib/ljd_16_bit_cpu.js for node environment and browser/ljd_16_bit_cpu.js
 for browser environments respectively.
+
+
+### Manual browser test ###
 
 Run manual test in browser; prints 100 to dev console.
 
@@ -118,11 +129,21 @@ npm run browser-test
 Then open localhost:8000 in your browser.
 Open the developer console to see the 100.
 
+
+### Manual node test ###
+
 Run manual test on node; prints 100.
 
 ```bash
 node test.js
 ```
+
+
+### Publish ###
+
+    npm login
+    npm version patch/minor/major
+    npm publish
 
 
 Author:  Lyall Jonathan Di Trapani

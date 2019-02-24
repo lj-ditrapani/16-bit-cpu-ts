@@ -1,6 +1,6 @@
 {
   "name": "ljd-16-bit-cpu",
-  "version": "0.0.1",
+  "version": "0.3.0",
   "description": "LJD 16-bit processor",
   "main": "lib/ljd_16_bit_cpu.js",
   "types": "lib/ljd_16_bit_cpu.d.ts",
