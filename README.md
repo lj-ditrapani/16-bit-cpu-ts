@@ -17,7 +17,7 @@ Design:
 - 16 instructions (4-bit op-code)
 
 The processor instruction set architecture (ISA) can be found in
-[doc/ISA.md](doc/ISA.md).
+[ISA.md](https://github.com/lj-ditrapani/16-bit-computer-specification/blob/master/ISA.md).
 
 
 npm package
