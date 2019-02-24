@@ -11,12 +11,22 @@ export interface ICpu {
   run(n: number): Uint16Array
 }
 
+/**
+ * Contains both CPU and ioRam.
+ */
 export interface ICpuWithIoRam {
   readonly cpu: ICpu
+  /**
+   * The system ioRam for the first frame
+   * (the cpu is using the other ioRam during the first frame)
+   */
   readonly ioRam: Uint16Array
 }
 
-export class CpuWithIoRam {
+/**
+ * Used for debugging
+ */
+export class CpuWithIoRam implements ICpuWithIoRam {
   constructor(public readonly cpu: Cpu, public readonly ioRam: Uint16Array) {}
 }
 
