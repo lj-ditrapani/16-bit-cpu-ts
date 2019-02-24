@@ -38,7 +38,7 @@
     "16-bit"
   ],
   "author": "Jonathan Di Trapani",
-  "repository": "https://github.com/lj-ditrapani/16-bit-cpu-typescript",
+  "repository": "https://github.com/lj-ditrapani/16-bit-cpu-ts",
   "license": "ISC",
   "devDependencies": {
     "@types/mocha": "^5.2.6",
