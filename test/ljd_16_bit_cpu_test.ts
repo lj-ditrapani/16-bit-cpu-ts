@@ -307,6 +307,28 @@ describe('Cpu', () => {
     assert.equal(ioRam[1023], 0x8078)
   })
 
+  it('when adding two negative numbers results in positive, sets overflow flag', () => {
+    const program = [
+      0x100a, // 00 $000B -> RA
+      0x20ba, // 01
+      0x1fab, // 02 $FA00 -> RA
+      0x200b, // 03
+      0x1801, // 04 -32767 -> R1
+      0x2001, // 05
+      0x1ff2, // 06 -1 -> R2
+      0x2ff2, // 07
+      0x5123, // 08 R1 + R2 = R3; -32768 + -1 = 32767 (overflow)
+      0xf0a2, // 09 Branch on overflow; take branch RA -> PC
+      0x0000, // 0A
+      0x4b30, // 0B R3 -> mem[$FA00]
+      0x0000 // 0C
+    ]
+    const cpuWithIoRam = makeCpu(program, [])
+    const cpu = cpuWithIoRam.cpu
+    const ioRam = cpu.run(40)
+    assert.equal(ioRam[512], 0x7fff)
+  })
+
   it('runs a program that BRV branches on positive and writes and reads to dataRam', () => {
     const program = [
       0x1001, // 00 $0001 -> R1
