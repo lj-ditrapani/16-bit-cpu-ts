@@ -1,3 +1,4 @@
+- gh-pages of docs
 - readme
-- ensure lib works in both browser & node
+    - link to docs
 - publish to npm
