@@ -1,4 +1,3 @@
-- jsdoc update/review
 - readme
 - ensure lib works in both browser & node
 - publish to npm
