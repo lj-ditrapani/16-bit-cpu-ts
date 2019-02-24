@@ -91,6 +91,12 @@ console.log(ioRam[512])      // prints 100
 ```
 
 
+API Documentation
+-----------------
+
+<https://lj-ditrapani.github.io/16-bit-cpu-ts/>
+
+
 Developing
 ----------
 
@@ -100,8 +106,8 @@ Lint, run tests and build on node with:
 npm run all
 ```
 
-This produces lib/ljd_16_bit_cpu.js for node and browser/ljd_16_bit_cpu.js
-for node and browser environments respectively.
+This produces lib/ljd_16_bit_cpu.js for node environment and browser/ljd_16_bit_cpu.js
+for browser environments respectively.
 
 Run manual test in browser; prints 100 to dev console.
 
