@@ -1,9 +1,6 @@
-<html>
-  <head>
-    <!--<script type="module" src="browser/ljd_16_bit_cpu.js"></script>-->
-    <script type="module">
-import { makeCpu, makeDebugCpu } from "/browser/ljd_16_bit_cpu.js"
+// The example code in the README
 
+const { makeCpu, makeDebugCpu } = require('/home/ljd/fun/16-bit-cpu-ts')
 // const { makeCpu, makeDebugCpu } = require('ljd_16_bit_cpu');
 // This program adds the values in dataRom[0] and dataRom[1]
 // then stores the result in ioRam[512]
@@ -28,6 +25,3 @@ const cpuWithIoRam = makeCpu(programRom, dataRom)
 const cpu = cpuWithIoRam.cpu
 const ioRam = cpu.run(1000)
 console.log(ioRam[512])      // prints 100
-    </script>
-  </head>
-</html>

@@ -7,6 +7,7 @@
   "scripts": {
     "test": "nyc -e .ts mocha -r ts-node/register \"test/**/*_test.ts\"",
     "test1": "mocha -r ts-node/register",
+    "browser-test": "http-server -p 8000",
     "fmt": "prettier --parser typescript --write \"*.ts\" \"src/**/*.ts\" \"test/**/*.ts\"",
     "fmtjs": "prettier --write \"src/**/*.js\" \"test/**/*.js\" \"src/**/*.json\" \"test/**/*.json\" \"*.json\"",
     "tlint": "tslint --fix -c tslint.json '*.ts' 'src/**/*.ts' 'test/**/*.ts'",
@@ -43,6 +44,7 @@
     "@types/mocha": "^5.2.6",
     "@types/node": "^10.12.26",
     "@types/sinon": "^7.0.6",
+    "http-server": "^0.11.1",
     "mocha": "^5.2.0",
     "nyc": "^13.3.0",
     "prettier": "^1.16.1",
