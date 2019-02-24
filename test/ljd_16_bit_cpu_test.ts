@@ -285,6 +285,28 @@ describe('Cpu', () => {
     assert.equal(cpu.dataRam[3], 0x8242)
   })
 
+  it('runs a program that shift left & right', () => {
+    const program = [
+      0x1e01, // $e00e -> R1
+      0x20e1,
+      0xd1a1, // shift R1 right by 3 -> R1
+      0x1702, // $700F -> R2
+      0x20f2,
+      0xd222, // shift R2 left by 3 -> R2
+      0x1fba, // $fbfe -> RA
+      0x2fea,
+      0x4a10, // R1 -> mem[$fbfe]
+      0x7a1a, // $fbfe + 1 -> RA
+      0x4a20, // R2 -> mem[$fbff]
+      0x0000
+    ]
+    const cpuWithIoRam = makeCpu(program, [])
+    const cpu = cpuWithIoRam.cpu
+    const ioRam = cpu.run(40)
+    assert.equal(ioRam[1022], 0x1c01)
+    assert.equal(ioRam[1023], 0x8078)
+  })
+
   it('runs a program that BRV branches on positive and writes and reads to dataRam', () => {
     const program = [
       0x1001, // 00 $0001 -> R1
