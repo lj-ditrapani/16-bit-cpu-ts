@@ -43,7 +43,7 @@ import { makeCpu, makeDebugCpu } from "/browser/ljd_16_bit_cpu.js"
 From node.js:
 
 ```js
-const { makeCpu, makeDebugCpu } = require('ljd_16_bit_cpu')
+const { makeCpu, makeDebugCpu } = require('ljd-16-bit-cpu')
 // do stuff
 ```
 
