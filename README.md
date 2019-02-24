@@ -31,10 +31,6 @@ npm package
 Usage
 -----
 
-```bash
-npm install ljd-16-bit-cpu
-```
-
 From browser:
 
 ```html
@@ -126,7 +122,7 @@ Run manual test in browser; prints 100 to dev console.
 npm run browser-test
 ```
 
-Then open localhost:8000 in your browser.
+Then open localhost:8000/test.html in your browser.
 Open the developer console to see the 100.
 
 
