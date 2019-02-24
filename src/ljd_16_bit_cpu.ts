@@ -266,8 +266,8 @@ export class Cpu implements ICpu {
     this.carryFlag = sum >= 65536
     const sum16Bit = sum & 0xffff
     this.overflowFlag =
-      (isNegative(a) && isNegative(b) && isPositiveOrZero(sum)) ||
-      (isPositiveOrZero(a) && isPositiveOrZero(b) && isNegative(sum))
+      (isNegative(a) && isNegative(b) && isPositiveOrZero(sum16Bit)) ||
+      (isPositiveOrZero(a) && isPositiveOrZero(b) && isNegative(sum16Bit))
     this.registers[rd] = sum16Bit
   }
 
