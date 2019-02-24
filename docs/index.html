@@ -62,6 +62,81 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
+				<h1 id="ljd-16-bit-processor">LJD 16-bit processor</h1>
+				<p>For other implementations, see <a href="https://github.com/lj-ditrapani/16-bit-computer-specification">https://github.com/lj-ditrapani/16-bit-computer-specification</a>.</p>
+				<h2 id="design-">Design:</h2>
+				<ul>
+					<li>16-bit CPU</li>
+					<li>16 X 16-bit registers and program counter (PC)</li>
+					<li>Harvard architecture</li>
+					<li>2^16 = 65,536 Program memory addresses (16-bit resolution)</li>
+					<li>2^16 = 65,536 Data memory addresses (16-bit resolution)</li>
+					<li>Program &amp; data memory are word-addressable</li>
+					<li>A word is 16 bits (2 bytes)</li>
+					<li>All instructions are 16 bits long</li>
+					<li>16 instructions (4-bit op-code)</li>
+				</ul>
+				<p>The processor instruction set architecture (ISA) can be found in
+				<a href="doc/ISA.md">doc/ISA.md</a>.</p>
+				<h2 id="usage">Usage</h2>
+				<pre><code class="language-bash">npm install ljd-16-bit-cpu</code></pre>
+				<p>From browser:</p>
+				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"module"</span>&gt;</span><span class="javascript">
+<span class="hljs-keyword">import</span> { makeCpu, makeDebugCpu } <span class="hljs-keyword">from</span> <span class="hljs-string">"/browser/ljd_16_bit_cpu.js"</span>
+<span class="hljs-comment">// do stuff</span>
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+				<p>From node.js:</p>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> { makeCpu, makeDebugCpu } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ljd_16_bit_cpu'</span>)
+<span class="hljs-comment">// do stuff</span></code></pre>
+				<p>Run a program</p>
+				<pre><code class="language-js"><span class="hljs-comment">// programRom is a array of 16-bit integers with length &lt;= 65,536</span>
+<span class="hljs-keyword">const</span> cpuWithIoRam = makeCpu(programRom, dataRom)
+<span class="hljs-keyword">const</span> cpu = cpuWithIoRam.cpu
+<span class="hljs-keyword">const</span> ioRam = cpu.run(<span class="hljs-number">1000</span>)</code></pre>
+				<p>Step through a program</p>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> cpuWithIoRam = makeDebugCpu(programRom, dataRom)
+<span class="hljs-keyword">const</span> cpu = cpuWithIoRam.cpu
+cpu.step()
+cpu.step()
+<span class="hljs-comment">// ...</span></code></pre>
+				<p>Example program in hex</p>
+				<pre><code class="language-js"><span class="hljs-comment">// This program adds the values in dataRom[0] and dataRom[1]</span>
+<span class="hljs-comment">// then stores the result in ioRam[512]</span>
+<span class="hljs-comment">// 27 + 73 = 100</span>
+<span class="hljs-comment">// Address $FA00 is the beginning of screen RAM == ioRam[512]</span>
+
+<span class="hljs-keyword">const</span> programRom = [
+  <span class="hljs-number">0x100A</span>,       <span class="hljs-comment">// HBY 0x00 RA</span>
+  <span class="hljs-number">0x200A</span>,       <span class="hljs-comment">// LBY 0x00 RA</span>
+  <span class="hljs-number">0x3A01</span>,       <span class="hljs-comment">// LOD RA R1</span>
+  <span class="hljs-number">0x201A</span>,       <span class="hljs-comment">// LBY 0x01 RA</span>
+  <span class="hljs-number">0x3A02</span>,       <span class="hljs-comment">// LOD RA R2</span>
+  <span class="hljs-number">0x5123</span>,       <span class="hljs-comment">// ADD R1 R2 R3</span>
+  <span class="hljs-number">0x1FAA</span>,       <span class="hljs-comment">// HBY 0xFA RA</span>
+  <span class="hljs-number">0x200A</span>,       <span class="hljs-comment">// LBY 0x00 RA</span>
+  <span class="hljs-number">0x4A30</span>,       <span class="hljs-comment">// STR RA R3</span>
+  <span class="hljs-number">0x0000</span>        <span class="hljs-comment">// END</span>
+]
+
+<span class="hljs-keyword">const</span> dataRom = [<span class="hljs-number">27</span>, <span class="hljs-number">73</span>, <span class="hljs-number">0</span>]
+<span class="hljs-keyword">const</span> cpuWithIoRam = makeCpu(programRom, dataRom)
+<span class="hljs-keyword">const</span> cpu = cpuWithIoRam.cpu
+<span class="hljs-keyword">const</span> ioRam = cpu.run(<span class="hljs-number">1000</span>)
+<span class="hljs-built_in">console</span>.log(ioRam[<span class="hljs-number">512</span>])      <span class="hljs-comment">// prints 100</span></code></pre>
+				<h2 id="api-documentation">API Documentation</h2>
+				<p><a href="https://lj-ditrapani.github.io/16-bit-cpu-ts/">https://lj-ditrapani.github.io/16-bit-cpu-ts/</a></p>
+				<h2 id="developing">Developing</h2>
+				<p>Lint, run tests and build on node with:</p>
+				<pre><code class="language-bash">npm run all</code></pre>
+				<p>This produces lib/ljd_16_bit_cpu.js for node environment and browser/ljd_16_bit_cpu.js
+				for browser environments respectively.</p>
+				<p>Run manual test in browser; prints 100 to dev console.</p>
+				<pre><code class="language-bash">npm run browser-test</code></pre>
+				<p>Then open localhost:8000 in your browser.
+				Open the developer console to see the 100.</p>
+				<p>Run manual test on node; prints 100.</p>
+				<pre><code class="language-bash">node test.js</code></pre>
+				<p>Author:  Lyall Jonathan Di Trapani</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">

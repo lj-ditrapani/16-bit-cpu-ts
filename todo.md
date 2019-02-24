@@ -1,4 +1,1 @@
-- gh-pages of docs
-- readme
-    - link to docs
 - publish to npm
