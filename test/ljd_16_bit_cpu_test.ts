@@ -13,7 +13,7 @@ describe('Cpu', () => {
       0x1faa, // Set RA to address $FA00
       0x200a,
       0x4a20, // Store mem($FA00) = R2
-      0x0000 // END
+      0x0000, // END
     ]
     const data = [0x0014, 0x0046]
     const cpuWithIoRam = makeCpu(program, data)
@@ -79,7 +79,7 @@ describe('Cpu', () => {
       0x1fba, // 12 HBY 0xFB RA
       0x2ffa, // 13 LBY 0xFF RA
       0x4a60, // 14 STR RA R6
-      0x0000 // 15 END
+      0x0000, // 15 END
     ]
 
     const data = new Array(258)
@@ -136,7 +136,7 @@ describe('Cpu', () => {
 
       // Output result
       0x4170, // F STR R1 R7         Output value of R7
-      0x0000 //   END
+      0x0000, //   END
     ]
 
     const length = 101
@@ -228,7 +228,7 @@ describe('Cpu', () => {
       0x2ce0, // 1D LBY 0xCE R0
       0x201a, // 1E LBY 0x01 RA       RA = 0x8001
       0x4a00, // 1F STR R0 -> M[RA]   0xFACE -> M[$8001]
-      0x0000 // 20 END
+      0x0000, // 20 END
     ]
 
     const cpuWithIoRam = makeDebugCpu(program, [])
@@ -265,7 +265,7 @@ describe('Cpu', () => {
       0x4a40, // STR $B7C2 -> mem[$8002]
       0x7a1a, // ADI RA + 1 = $8003
       0x4a50, // STR $8242 -> mem[$8003]
-      0x0000
+      0x0000,
     ]
 
     const cpuWithIoRam = makeDebugCpu(program, [])
@@ -298,7 +298,7 @@ describe('Cpu', () => {
       0x4a10, // R1 -> mem[$fbfe]
       0x7a1a, // $fbfe + 1 -> RA
       0x4a20, // R2 -> mem[$fbff]
-      0x0000
+      0x0000,
     ]
     const cpuWithIoRam = makeCpu(program, [])
     const cpu = cpuWithIoRam.cpu
@@ -321,7 +321,7 @@ describe('Cpu', () => {
       0xf0a2, // 09 Branch on overflow; take branch RA -> PC
       0x0000, // 0A
       0x4b30, // 0B R3 -> mem[$FA00]
-      0x0000 // 0C
+      0x0000, // 0C
     ]
     const cpuWithIoRam = makeCpu(program, [])
     const cpu = cpuWithIoRam.cpu
@@ -351,7 +351,7 @@ describe('Cpu', () => {
       0x1f7a, // 11 $f7ff -> RA (end of data RAM)
       0x2ffa, // 12
       0x4a20, // 13 STR 1 -> mem[$f7ff] (end of data ROM)
-      0x0000 // 14
+      0x0000, // 14
     ]
     const cpuWithIoRam = makeDebugCpu(program, [])
     const cpu = cpuWithIoRam.cpu
@@ -375,7 +375,7 @@ describe('Cpu', () => {
       0x100a, // $0000 -> RA
       0x200a,
       0x4a10, // STR $0005 -> mem[$0000] (begining of data ROM)
-      0x0000
+      0x0000,
     ]
     const cpuWithIoRam = makeDebugCpu(program, [])
     const cpu = cpuWithIoRam.cpu
@@ -387,7 +387,7 @@ describe('Cpu', () => {
       0x1fca, // $fc00 -> RA
       0x200a,
       0x3a01, // LOD mem[$fc00] -> R1 (begining illegal space after ioRam)
-      0x0000
+      0x0000,
     ]
     const cpuWithIoRam = makeDebugCpu(program, [])
     const cpu = cpuWithIoRam.cpu
@@ -404,7 +404,7 @@ describe('Cpu', () => {
       0x1fca, // $fc00 -> RA
       0x200a,
       0x4a10, // STR $0005 -> mem[$fc00] (begining illegal space after ioRam)
-      0x0000
+      0x0000,
     ]
     const cpuWithIoRam = makeDebugCpu(program, [])
     const cpu = cpuWithIoRam.cpu

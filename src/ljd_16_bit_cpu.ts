@@ -75,7 +75,7 @@ export class Cpu implements ICpu {
   ) {
     ensureLength(programRom, 64 * 1024, 'programRom')
     ensureLength(dataRom, 32 * 1024, 'dataRom')
-    this.instructions = Array.from(programRom).map(word => {
+    this.instructions = Array.from(programRom).map((word) => {
       const [opCode, a, b, c] = getNibbles(word)
       return opCode2Instruction[opCode](a, b, c)
     })
@@ -397,7 +397,7 @@ class Brf {
   }
 }
 
-const opCode2Instruction: Array<(a: number, b: number, c: number) => Instruction> = [
+const opCode2Instruction: ((a: number, b: number, c: number) => Instruction)[] = [
   (_a, _b, _c) => end,
   (a, b, c) => new LoadByteInstruction('hby', a, b, c),
   (a, b, c) => new LoadByteInstruction('lby', a, b, c),
@@ -413,7 +413,7 @@ const opCode2Instruction: Array<(a: number, b: number, c: number) => Instruction
   (a, _b, c) => new Not(a, c),
   (a, b, c) => new Shf(a, b, c),
   (a, b, c) => new Brv(a, b, c),
-  (_a, b, c) => new Brf(b, c)
+  (_a, b, c) => new Brf(b, c),
 ]
 
 const ensure = (flag: boolean, message: string): void => {
@@ -448,5 +448,5 @@ const getNibbles = (word: number): [number, number, number, number] => [
   word >> 12,
   (word >> 8) & 0xf,
   (word >> 4) & 0xf,
-  word & 0xf
+  word & 0xf,
 ]
