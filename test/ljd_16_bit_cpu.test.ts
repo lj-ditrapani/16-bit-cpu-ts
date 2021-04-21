@@ -1,5 +1,4 @@
 import { makeCpu, makeDebugCpu } from '../src/ljd_16_bit_cpu'
-import { strict as assert } from 'assert'
 
 describe('Cpu', () => {
   it('can run a program to add 2 numbers together', () => {
@@ -17,11 +16,11 @@ describe('Cpu', () => {
     ]
     const data = [0x0014, 0x0046]
     const cpuWithIoRam = makeCpu(program, data)
-    assert.equal(cpuWithIoRam.ioRam[512], 0x0000)
+    expect(cpuWithIoRam.ioRam[512]).toBe(0x0000)
     const ioRam1 = cpuWithIoRam.cpu.run(10)
-    assert.equal(ioRam1[512], 0x005a)
+    expect(ioRam1[512]).toBe(0x005a)
     const ioRam2 = cpuWithIoRam.cpu.run(12)
-    assert.equal(ioRam2[512], 0x005a)
+    expect(ioRam2[512]).toBe(0x005a)
   })
 
   it('runs a branching program where 101 - 99 < 3 => 255 and PC = 21', () => {
@@ -86,14 +85,13 @@ describe('Cpu', () => {
     data[0x0100] = 101
     data[0x0101] = 99
     const { cpu, ioRam } = makeDebugCpu(program, data)
-    assert.equal(ioRam[1023], 0)
+    expect(ioRam[1023]).toBe(0)
     const ioRam1 = cpu.run(21)
-    assert.equal(ioRam1[1023], 255)
-    assert.deepEqual(
-      cpu.registers,
+    expect(ioRam1[1023]).toBe(255)
+    expect(cpu.registers).toStrictEqual(
       Uint16Array.of(0, 101, 99, 2, 3, 65535, 255, 0, 0, 0, 0xfbff, 0x10, 0x12, 0, 0, 0),
     )
-    assert.equal(cpu.instructionCounter, 21)
+    expect(cpu.instructionCounter).toBe(21)
   })
 
   it(`runs a program with a while loop that outputs 0xDOA8 (${0xd0a8}) and PC = 16`, () => {
@@ -161,11 +159,11 @@ describe('Cpu', () => {
      * 16-bit hex(+12120) = 0x2F58
      * 16-bit hex(-12120) = 0xD0A8
      */
-    assert.equal(ioRam[0x84], 101)
-    assert.equal(ioRam[0x84 + 1], 10)
-    assert.equal(ioRam[0x84 + 101], 110)
-    assert.equal(ioRam[1023], 0xd0a8)
-    assert.equal(cpu.instructionCounter, 16)
+    expect(ioRam[0x84]).toBe(101)
+    expect(ioRam[0x84 + 1]).toBe(10)
+    expect(ioRam[0x84 + 101]).toBe(110)
+    expect(ioRam[1023]).toBe(0xd0a8)
+    expect(cpu.instructionCounter).toBe(16)
   })
 
   it('runs a program that adds/subtracs/shifts with carries & overflows', () => {
@@ -235,11 +233,11 @@ describe('Cpu', () => {
     const cpu = cpuWithIoRam.cpu
     cpu.run(40)
 
-    // assert.equal(cpu.instructionCounter, 0x0020)
-    assert.equal(cpu.registers[0], 0xface)
-    assert.equal(cpu.registers[0xa], 0x8001)
-    assert.equal(cpu.dataRam[0x0000], 0x0014)
-    assert.equal(cpu.dataRam[0x0001], 0xface)
+    // expect(cpu.instructionCounter).toBe(0x0020)
+    expect(cpu.registers[0]).toBe(0xface)
+    expect(cpu.registers[0xa]).toBe(0x8001)
+    expect(cpu.dataRam[0x0000]).toBe(0x0014)
+    expect(cpu.dataRam[0x0001]).toBe(0xface)
   })
 
   it('runs a program that uses AND, ORR, XOR and NOT instructions', () => {
@@ -278,11 +276,11 @@ describe('Cpu', () => {
     registers[4] = 0xb7c2
     registers[5] = 0x8242
     registers[0xa] = 0x8003
-    assert.deepEqual(cpu.registers, registers)
-    assert.equal(cpu.dataRam[0], 0x083c)
-    assert.equal(cpu.dataRam[1], 0x483d)
-    assert.equal(cpu.dataRam[2], 0xb7c2)
-    assert.equal(cpu.dataRam[3], 0x8242)
+    expect(cpu.registers).toStrictEqual(registers)
+    expect(cpu.dataRam[0]).toBe(0x083c)
+    expect(cpu.dataRam[1]).toBe(0x483d)
+    expect(cpu.dataRam[2]).toBe(0xb7c2)
+    expect(cpu.dataRam[3]).toBe(0x8242)
   })
 
   it('runs a program that shift left & right', () => {
@@ -303,8 +301,8 @@ describe('Cpu', () => {
     const cpuWithIoRam = makeCpu(program, [])
     const cpu = cpuWithIoRam.cpu
     const ioRam = cpu.run(40)
-    assert.equal(ioRam[1022], 0x1c01)
-    assert.equal(ioRam[1023], 0x8078)
+    expect(ioRam[1022]).toBe(0x1c01)
+    expect(ioRam[1023]).toBe(0x8078)
   })
 
   it('when adding two negative numbers results in positive, sets overflow flag', () => {
@@ -326,7 +324,7 @@ describe('Cpu', () => {
     const cpuWithIoRam = makeCpu(program, [])
     const cpu = cpuWithIoRam.cpu
     const ioRam = cpu.run(40)
-    assert.equal(ioRam[512], 0x7fff)
+    expect(ioRam[512]).toBe(0x7fff)
   })
 
   it('runs a program that BRV branches on positive and writes and reads to dataRam', () => {
@@ -356,14 +354,13 @@ describe('Cpu', () => {
     const cpuWithIoRam = makeDebugCpu(program, [])
     const cpu = cpuWithIoRam.cpu
     cpu.run(25)
-    assert.equal(cpu.dataRam[0], 65535)
-    assert.equal(cpu.dataRam[30 * 1024 - 1], 1)
+    expect(cpu.dataRam[0]).toBe(65535)
+    expect(cpu.dataRam[30 * 1024 - 1]).toBe(1)
   })
 
   it('throws if the program rom length is > 64 * 1024', () => {
     const program = Array(64 * 1024 + 1)
-    assert.throws(
-      () => makeCpu(program, []),
+    expect(() => makeCpu(program, [])).toThrow(
       /Invalid argument: programRom length must be <= 65536/,
     )
   })
@@ -379,7 +376,7 @@ describe('Cpu', () => {
     ]
     const cpuWithIoRam = makeDebugCpu(program, [])
     const cpu = cpuWithIoRam.cpu
-    assert.throws(() => cpu.run(10), /LJD Cpu: Tried to write into data ROM @ 0/)
+    expect(() => cpu.run(10)).toThrow(/LJD Cpu: Tried to write into data ROM @ 0/)
   })
 
   it('throws if a program tries to read from last 1024 words in memory address', () => {
@@ -391,8 +388,7 @@ describe('Cpu', () => {
     ]
     const cpuWithIoRam = makeDebugCpu(program, [])
     const cpu = cpuWithIoRam.cpu
-    assert.throws(
-      () => cpu.run(10),
+    expect(() => cpu.run(10)).toThrow(
       /LJD Cpu: Tried to read from a memory address out of bounds 64512/,
     )
   })
@@ -408,8 +404,7 @@ describe('Cpu', () => {
     ]
     const cpuWithIoRam = makeDebugCpu(program, [])
     const cpu = cpuWithIoRam.cpu
-    assert.throws(
-      () => cpu.run(10),
+    expect(() => cpu.run(10)).toThrow(
       /LJD Cpu: Tried to write to a memory address out of bounds 64512/,
     )
   })
