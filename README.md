@@ -131,7 +131,7 @@ Open the developer console to see the 100.
 Run manual test on node; prints 100.
 
 ```bash
-node test.js
+node manual-test.js
 ```
 
 

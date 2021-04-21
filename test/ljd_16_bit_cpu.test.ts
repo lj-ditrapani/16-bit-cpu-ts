@@ -1,4 +1,4 @@
-import { makeCpu, makeDebugCpu } from './../src/ljd_16_bit_cpu'
+import { makeCpu, makeDebugCpu } from '../src/ljd_16_bit_cpu'
 import { strict as assert } from 'assert'
 
 describe('Cpu', () => {

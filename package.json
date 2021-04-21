@@ -5,30 +5,14 @@
   "main": "lib/ljd_16_bit_cpu.js",
   "types": "lib/ljd_16_bit_cpu.d.ts",
   "scripts": {
-    "test": "nyc -e .ts mocha -r ts-node/register \"test/**/*_test.ts\"",
-    "test1": "mocha -r ts-node/register",
+    "test": "jest --coverage",
     "browser-test": "http-server -p 8000",
     "lint": "eslint --fix *.js *.json 'src/**/*.ts' 'test/**/*.ts'",
     "tsc": "tsc",
     "browser-build": "tsc -p browser-tsconfig.json",
-    "doc": "typedoc --excludePrivate --excludeNotExported --out docs/ src && touch docs/.nojekyll",
+    "doc": "typedoc --excludePrivate --out docs/ src && touch docs/.nojekyll",
     "static": "http-server",
     "all": "npm run lint && tsc && npm run browser-build && npm test"
-  },
-  "nyc": {
-    "check-coverage": true,
-    "per-file": true,
-    "statements": 100,
-    "branches": 100,
-    "functions": 100,
-    "lines": 100,
-    "require": [
-      "ts-node/register"
-    ],
-    "exclude": [
-      "**/*.d.ts",
-      "test/**"
-    ]
   },
   "keywords": [
     "cpu",
@@ -38,7 +22,7 @@
   "repository": "https://github.com/lj-ditrapani/16-bit-cpu-ts",
   "license": "ISC",
   "devDependencies": {
-    "@types/mocha": "^8.2.2",
+    "@types/jest": "^26.0.22",
     "@types/node": "^14.14.41",
     "@types/sinon": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
@@ -46,13 +30,13 @@
     "eslint": "^7.24.0",
     "eslint-config-prettier": "^8.2.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "jest": "^26.6.3",
     "http-server": "^0.12.3",
-    "mocha": "^8.3.2",
-    "nyc": "^15.1.0",
     "prettier": "^2.2.1",
     "sinon": "^10.0.0",
     "source-map-support": "^0.5.19",
     "ts-node": "^9.1.1",
+    "ts-jest": "^26.5.5",
     "typedoc": "^0.20.35",
     "typescript": "^4.2.4"
   },
