@@ -122,8 +122,12 @@ Run manual test in browser; prints 100 to dev console.
 npm run browser-test
 ```
 
-Then open localhost:8000/test.html in your browser.
+Then open localhost:8000/manual-test.html in your browser.
 Open the developer console to see the 100.
+
+```bash
+firefox localhost:8000/manual-test.html
+```
 
 
 ### Manual node test ###
