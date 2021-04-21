@@ -58,8 +58,8 @@ export const makeDebugCpu = (programRom: number[], dataRom: number[]): CpuWithIo
 }
 
 export class Cpu implements ICpu {
-  public overflowFlag: boolean = false
-  public carryFlag: boolean = false
+  public overflowFlag = false
+  public carryFlag = false
   public instructionCounter = 0
   public readonly registers = new Uint16Array(16)
   public readonly dataRam = new Uint16Array(30 * 1024)
@@ -71,7 +71,7 @@ export class Cpu implements ICpu {
     programRom: Uint16Array,
     private readonly dataRom: Uint16Array,
     private readonly ioRam1: Uint16Array,
-    private readonly ioRam2: Uint16Array
+    private readonly ioRam2: Uint16Array,
   ) {
     ensureLength(programRom, 64 * 1024, 'programRom')
     ensureLength(dataRom, 32 * 1024, 'dataRom')
@@ -140,7 +140,7 @@ export class Cpu implements ICpu {
           this.registers[instruction.sourceRegister1],
           this.registers[instruction.sourceRegister2],
           0,
-          instruction.destinationRegister
+          instruction.destinationRegister,
         )
         this.incInstructionCounter()
         return false
@@ -149,7 +149,7 @@ export class Cpu implements ICpu {
           this.registers[instruction.sourceRegister1],
           ~this.registers[instruction.sourceRegister2],
           1,
-          instruction.destinationRegister
+          instruction.destinationRegister,
         )
         this.incInstructionCounter()
         return false
@@ -158,7 +158,7 @@ export class Cpu implements ICpu {
           this.registers[instruction.sourceRegister1],
           instruction.sourceRegister2,
           0,
-          instruction.destinationRegister
+          instruction.destinationRegister,
         )
         this.incInstructionCounter()
         return false
@@ -167,7 +167,7 @@ export class Cpu implements ICpu {
           this.registers[instruction.sourceRegister1],
           ~instruction.sourceRegister2,
           1,
-          instruction.destinationRegister
+          instruction.destinationRegister,
         )
         this.incInstructionCounter()
         return false
@@ -207,7 +207,7 @@ export class Cpu implements ICpu {
       }
       case 'brv': {
         const value = this.registers[instruction.sourceRegister1]
-        let jump: boolean = false
+        let jump = false
         if (instruction.negative && isNegative(value)) {
           jump = true
         } else if (instruction.zero && value === 0) {
@@ -225,7 +225,7 @@ export class Cpu implements ICpu {
         return false
       }
       case 'brf': {
-        let jump: boolean = false
+        let jump = false
         if (instruction.overflow && this.overflowFlag) {
           jump = true
         } else if (instruction.carry && this.carryFlag) {
@@ -252,7 +252,7 @@ export class Cpu implements ICpu {
       return this.ioRam[address & 0x03ff]
     } else {
       throw new Error(
-        'LJD Cpu: Tried to read from a memory address out of bounds ' + address
+        'LJD Cpu: Tried to read from a memory address out of bounds ' + address,
       )
     }
   }
@@ -266,7 +266,7 @@ export class Cpu implements ICpu {
       this.ioRam[address & 0x03ff] = value
     } else {
       throw new Error(
-        'LJD Cpu: Tried to write to a memory address out of bounds ' + address
+        'LJD Cpu: Tried to write to a memory address out of bounds ' + address,
       )
     }
   }
@@ -312,7 +312,7 @@ class LoadByteInstruction {
     public readonly name: 'hby' | 'lby',
     a: number,
     b: number,
-    public readonly destinationRegister: number
+    public readonly destinationRegister: number,
   ) {
     this.immediate8Bit = (a << 4) | b
   }
@@ -323,7 +323,7 @@ class Lod {
 
   constructor(
     public readonly sourceRegister1: number,
-    public readonly destinationRegister: number
+    public readonly destinationRegister: number,
   ) {}
 }
 
@@ -332,7 +332,7 @@ class Str {
 
   constructor(
     public readonly sourceRegister1: number,
-    public readonly sourceRegister2: number
+    public readonly sourceRegister2: number,
   ) {}
 }
 
@@ -341,7 +341,7 @@ class Nibbles3Instruction {
     public readonly name: instructionsWith3Nibbles,
     public readonly sourceRegister1: number,
     public readonly sourceRegister2: number,
-    public readonly destinationRegister: number
+    public readonly destinationRegister: number,
   ) {}
 }
 
@@ -350,7 +350,7 @@ class Not {
 
   constructor(
     public readonly sourceRegister1: number,
-    public readonly destinationRegister: number
+    public readonly destinationRegister: number,
   ) {}
 }
 
@@ -362,7 +362,7 @@ class Shf {
   constructor(
     public readonly sourceRegister1: number,
     sourceRegister2: number,
-    public readonly destinationRegister: number
+    public readonly destinationRegister: number,
   ) {
     this.direction = sourceRegister2 & 0x8 ? 'right' : 'left'
     this.amount = (sourceRegister2 & 0x7) + 1
@@ -378,7 +378,7 @@ class Brv {
   constructor(
     public readonly sourceRegister1: number,
     public readonly sourceRegister2: number,
-    conditions: number
+    conditions: number,
   ) {
     this.negative = (conditions & 4) === 4
     this.zero = (conditions & 2) === 2
@@ -433,7 +433,7 @@ const ensureMaxLength = (array: number[], length: number, name: string): void =>
 const getShiftCarry = (
   value: number,
   direction: 'left' | 'right',
-  amount: number
+  amount: number,
 ): boolean => {
   const position = direction === 'left' ? 16 - amount : amount - 1
   const mask = 1 << position

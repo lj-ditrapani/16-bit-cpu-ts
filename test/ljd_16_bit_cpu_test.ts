@@ -1,5 +1,5 @@
-import { strict as assert } from 'assert'
 import { makeCpu, makeDebugCpu } from './../src/ljd_16_bit_cpu'
+import { strict as assert } from 'assert'
 
 describe('Cpu', () => {
   it('can run a program to add 2 numbers together', () => {
@@ -91,7 +91,7 @@ describe('Cpu', () => {
     assert.equal(ioRam1[1023], 255)
     assert.deepEqual(
       cpu.registers,
-      Uint16Array.of(0, 101, 99, 2, 3, 65535, 255, 0, 0, 0, 0xfbff, 0x10, 0x12, 0, 0, 0)
+      Uint16Array.of(0, 101, 99, 2, 3, 65535, 255, 0, 0, 0, 0xfbff, 0x10, 0x12, 0, 0, 0),
     )
     assert.equal(cpu.instructionCounter, 21)
   })
@@ -364,7 +364,7 @@ describe('Cpu', () => {
     const program = Array(64 * 1024 + 1)
     assert.throws(
       () => makeCpu(program, []),
-      /Invalid argument: programRom length must be <= 65536/
+      /Invalid argument: programRom length must be <= 65536/,
     )
   })
 
@@ -393,7 +393,7 @@ describe('Cpu', () => {
     const cpu = cpuWithIoRam.cpu
     assert.throws(
       () => cpu.run(10),
-      /LJD Cpu: Tried to read from a memory address out of bounds 64512/
+      /LJD Cpu: Tried to read from a memory address out of bounds 64512/,
     )
   })
 
@@ -410,7 +410,7 @@ describe('Cpu', () => {
     const cpu = cpuWithIoRam.cpu
     assert.throws(
       () => cpu.run(10),
-      /LJD Cpu: Tried to write to a memory address out of bounds 64512/
+      /LJD Cpu: Tried to write to a memory address out of bounds 64512/,
     )
   })
 })
