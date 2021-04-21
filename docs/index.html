@@ -4,16 +4,17 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>ljd-16-bit-cpu</title>
-	<meta name="description" content="">
+	<meta name="description" content="Documentation for ljd-16-bit-cpu">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
 	<div class="tsd-page-toolbar">
 		<div class="container">
 			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
 					<div class="field">
 						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
 						<input id="tsd-search-field" type="text" />
@@ -49,12 +50,7 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
-			<h1> ljd-16-bit-cpu</h1>
+			<h1>ljd-16-bit-cpu</h1>
 		</div>
 	</div>
 </header>
@@ -62,9 +58,13 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<h1 id="ljd-16-bit-processor">LJD 16-bit processor</h1>
+				<a href="#ljd-16-bit-processor" id="ljd-16-bit-processor" style="color: inherit; text-decoration: none;">
+					<h1>LJD 16-bit processor</h1>
+				</a>
 				<p>For other implementations, see <a href="https://github.com/lj-ditrapani/16-bit-computer-specification">https://github.com/lj-ditrapani/16-bit-computer-specification</a>.</p>
-				<h2 id="design-">Design:</h2>
+				<a href="#design" id="design" style="color: inherit; text-decoration: none;">
+					<h2>Design:</h2>
+				</a>
 				<ul>
 					<li>16-bit CPU</li>
 					<li>16 X 16-bit registers and program counter (PC)</li>
@@ -78,86 +78,129 @@
 				</ul>
 				<p>The processor instruction set architecture (ISA) can be found in
 				<a href="https://github.com/lj-ditrapani/16-bit-computer-specification/blob/master/ISA.md">ISA.md</a>.</p>
-				<h2 id="npm-package">npm package</h2>
+				<a href="#npm-package" id="npm-package" style="color: inherit; text-decoration: none;">
+					<h2>npm package</h2>
+				</a>
 				<p><a href="https://www.npmjs.com/package/ljd-16-bit-cpu">https://www.npmjs.com/package/ljd-16-bit-cpu</a></p>
-				<pre><code>npm <span class="hljs-keyword">install</span> <span class="hljs-comment">--save ljd-16-bit-cpu</span></code></pre><h2 id="usage">Usage</h2>
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">install</span><span style="color: #000000"> --</span><span style="color: #001080">save</span><span style="color: #000000"> </span><span style="color: #001080">ljd</span><span style="color: #000000">-</span><span style="color: #098658">16</span><span style="color: #000000">-</span><span style="color: #001080">bit</span><span style="color: #000000">-</span><span style="color: #001080">cpu</span>
+</code></pre>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
 				<p>From browser:</p>
-				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"module"</span>&gt;</span><span class="javascript">
-<span class="hljs-keyword">import</span> { makeCpu, makeDebugCpu } <span class="hljs-keyword">from</span> <span class="hljs-string">"/browser/ljd_16_bit_cpu.js"</span>
-<span class="hljs-comment">// do stuff</span>
-</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+				<pre><code class="language-html"><span style="color: #800000">&lt;script</span><span style="color: #000000FF"> </span><span style="color: #FF0000">type</span><span style="color: #000000FF">=</span><span style="color: #0000FF">&quot;module&quot;</span><span style="color: #800000">&gt;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000FF"> { </span><span style="color: #001080">makeCpu</span><span style="color: #000000FF">, </span><span style="color: #001080">makeDebugCpu</span><span style="color: #000000FF"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000FF"> </span><span style="color: #A31515">&quot;/browser/ljd_16_bit_cpu.js&quot;</span>
+<span style="color: #008000">// do stuff</span>
+<span style="color: #800000">&lt;/script&gt;</span>
+</code></pre>
 				<p>From node.js:</p>
-				<pre><code class="language-js"><span class="hljs-keyword">const</span> { makeCpu, makeDebugCpu } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ljd-16-bit-cpu'</span>)
-<span class="hljs-comment">// do stuff</span></code></pre>
+				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> { </span><span style="color: #0070C1">makeCpu</span><span style="color: #000000">, </span><span style="color: #0070C1">makeDebugCpu</span><span style="color: #000000"> } = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ljd-16-bit-cpu&#039;</span><span style="color: #000000">)</span>
+<span style="color: #008000">// do stuff</span>
+</code></pre>
 				<p>Run a program</p>
-				<pre><code class="language-js"><span class="hljs-comment">// programRom is a array of 16-bit integers with length &lt;= 65,536</span>
-<span class="hljs-keyword">const</span> cpuWithIoRam = makeCpu(programRom, dataRom)
-<span class="hljs-keyword">const</span> cpu = cpuWithIoRam.cpu
-<span class="hljs-keyword">const</span> ioRam = cpu.run(<span class="hljs-number">1000</span>)</code></pre>
+				<pre><code class="language-js"><span style="color: #008000">// programRom is a array of 16-bit integers with length &lt;= 65,536</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">cpuWithIoRam</span><span style="color: #000000"> = </span><span style="color: #795E26">makeCpu</span><span style="color: #000000">(</span><span style="color: #001080">programRom</span><span style="color: #000000">, </span><span style="color: #001080">dataRom</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">cpu</span><span style="color: #000000"> = </span><span style="color: #001080">cpuWithIoRam</span><span style="color: #000000">.</span><span style="color: #001080">cpu</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ioRam</span><span style="color: #000000"> = </span><span style="color: #001080">cpu</span><span style="color: #000000">.</span><span style="color: #795E26">run</span><span style="color: #000000">(</span><span style="color: #098658">1000</span><span style="color: #000000">)</span>
+</code></pre>
 				<p>Step through a program</p>
-				<pre><code class="language-js"><span class="hljs-keyword">const</span> cpuWithIoRam = makeDebugCpu(programRom, dataRom)
-<span class="hljs-keyword">const</span> cpu = cpuWithIoRam.cpu
-cpu.step()
-cpu.step()
-<span class="hljs-comment">// ...</span></code></pre>
+				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">cpuWithIoRam</span><span style="color: #000000"> = </span><span style="color: #795E26">makeDebugCpu</span><span style="color: #000000">(</span><span style="color: #001080">programRom</span><span style="color: #000000">, </span><span style="color: #001080">dataRom</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">cpu</span><span style="color: #000000"> = </span><span style="color: #001080">cpuWithIoRam</span><span style="color: #000000">.</span><span style="color: #001080">cpu</span>
+<span style="color: #001080">cpu</span><span style="color: #000000">.</span><span style="color: #795E26">step</span><span style="color: #000000">()</span>
+<span style="color: #001080">cpu</span><span style="color: #000000">.</span><span style="color: #795E26">step</span><span style="color: #000000">()</span>
+<span style="color: #008000">// ...</span>
+</code></pre>
 				<p>Example program in hex</p>
-				<pre><code class="language-js"><span class="hljs-comment">// This program adds the values in dataRom[0] and dataRom[1]</span>
-<span class="hljs-comment">// then stores the result in ioRam[512]</span>
-<span class="hljs-comment">// 27 + 73 = 100</span>
-<span class="hljs-comment">// Address $FA00 is the beginning of screen RAM == ioRam[512]</span>
+				<pre><code class="language-js"><span style="color: #008000">// This program adds the values in dataRom[0] and dataRom[1]</span>
+<span style="color: #008000">// then stores the result in ioRam[512]</span>
+<span style="color: #008000">// 27 + 73 = 100</span>
+<span style="color: #008000">// Address $FA00 is the beginning of screen RAM == ioRam[512]</span>
 
-<span class="hljs-keyword">const</span> programRom = [
-  <span class="hljs-number">0x100A</span>,       <span class="hljs-comment">// HBY 0x00 RA</span>
-  <span class="hljs-number">0x200A</span>,       <span class="hljs-comment">// LBY 0x00 RA</span>
-  <span class="hljs-number">0x3A01</span>,       <span class="hljs-comment">// LOD RA R1</span>
-  <span class="hljs-number">0x201A</span>,       <span class="hljs-comment">// LBY 0x01 RA</span>
-  <span class="hljs-number">0x3A02</span>,       <span class="hljs-comment">// LOD RA R2</span>
-  <span class="hljs-number">0x5123</span>,       <span class="hljs-comment">// ADD R1 R2 R3</span>
-  <span class="hljs-number">0x1FAA</span>,       <span class="hljs-comment">// HBY 0xFA RA</span>
-  <span class="hljs-number">0x200A</span>,       <span class="hljs-comment">// LBY 0x00 RA</span>
-  <span class="hljs-number">0x4A30</span>,       <span class="hljs-comment">// STR RA R3</span>
-  <span class="hljs-number">0x0000</span>        <span class="hljs-comment">// END</span>
-]
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">programRom</span><span style="color: #000000"> = [</span>
+<span style="color: #000000">  </span><span style="color: #098658">0x100A</span><span style="color: #000000">,       </span><span style="color: #008000">// HBY 0x00 RA</span>
+<span style="color: #000000">  </span><span style="color: #098658">0x200A</span><span style="color: #000000">,       </span><span style="color: #008000">// LBY 0x00 RA</span>
+<span style="color: #000000">  </span><span style="color: #098658">0x3A01</span><span style="color: #000000">,       </span><span style="color: #008000">// LOD RA R1</span>
+<span style="color: #000000">  </span><span style="color: #098658">0x201A</span><span style="color: #000000">,       </span><span style="color: #008000">// LBY 0x01 RA</span>
+<span style="color: #000000">  </span><span style="color: #098658">0x3A02</span><span style="color: #000000">,       </span><span style="color: #008000">// LOD RA R2</span>
+<span style="color: #000000">  </span><span style="color: #098658">0x5123</span><span style="color: #000000">,       </span><span style="color: #008000">// ADD R1 R2 R3</span>
+<span style="color: #000000">  </span><span style="color: #098658">0x1FAA</span><span style="color: #000000">,       </span><span style="color: #008000">// HBY 0xFA RA</span>
+<span style="color: #000000">  </span><span style="color: #098658">0x200A</span><span style="color: #000000">,       </span><span style="color: #008000">// LBY 0x00 RA</span>
+<span style="color: #000000">  </span><span style="color: #098658">0x4A30</span><span style="color: #000000">,       </span><span style="color: #008000">// STR RA R3</span>
+<span style="color: #000000">  </span><span style="color: #098658">0x0000</span><span style="color: #000000">        </span><span style="color: #008000">// END</span>
+<span style="color: #000000">]</span>
 
-<span class="hljs-keyword">const</span> dataRom = [<span class="hljs-number">27</span>, <span class="hljs-number">73</span>, <span class="hljs-number">0</span>]
-<span class="hljs-keyword">const</span> cpuWithIoRam = makeCpu(programRom, dataRom)
-<span class="hljs-keyword">const</span> cpu = cpuWithIoRam.cpu
-<span class="hljs-keyword">const</span> ioRam = cpu.run(<span class="hljs-number">1000</span>)
-<span class="hljs-built_in">console</span>.log(ioRam[<span class="hljs-number">512</span>])      <span class="hljs-comment">// prints 100</span></code></pre>
-				<h2 id="api-documentation">API Documentation</h2>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">dataRom</span><span style="color: #000000"> = [</span><span style="color: #098658">27</span><span style="color: #000000">, </span><span style="color: #098658">73</span><span style="color: #000000">, </span><span style="color: #098658">0</span><span style="color: #000000">]</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">cpuWithIoRam</span><span style="color: #000000"> = </span><span style="color: #795E26">makeCpu</span><span style="color: #000000">(</span><span style="color: #001080">programRom</span><span style="color: #000000">, </span><span style="color: #001080">dataRom</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">cpu</span><span style="color: #000000"> = </span><span style="color: #001080">cpuWithIoRam</span><span style="color: #000000">.</span><span style="color: #001080">cpu</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ioRam</span><span style="color: #000000"> = </span><span style="color: #001080">cpu</span><span style="color: #000000">.</span><span style="color: #795E26">run</span><span style="color: #000000">(</span><span style="color: #098658">1000</span><span style="color: #000000">)</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">ioRam</span><span style="color: #000000">[</span><span style="color: #098658">512</span><span style="color: #000000">])      </span><span style="color: #008000">// prints 100</span>
+</code></pre>
+				<a href="#api-documentation" id="api-documentation" style="color: inherit; text-decoration: none;">
+					<h2>API Documentation</h2>
+				</a>
 				<p><a href="https://lj-ditrapani.github.io/16-bit-cpu-ts/">https://lj-ditrapani.github.io/16-bit-cpu-ts/</a></p>
-				<h2 id="developing">Developing</h2>
-				<h3 id="format-lint-test-build">Format, lint, test, build</h3>
-				<pre><code class="language-bash">npm run all</code></pre>
+				<a href="#developing" id="developing" style="color: inherit; text-decoration: none;">
+					<h2>Developing</h2>
+				</a>
+				<a href="#format-lint-test-build" id="format-lint-test-build" style="color: inherit; text-decoration: none;">
+					<h3>Format, lint, test, build</h3>
+				</a>
+				<pre><code class="language-bash"><span style="color: #000000">npm run all</span>
+</code></pre>
 				<p>This produces lib/ljd_16_bit_cpu.js for node environment and browser/ljd_16_bit_cpu.js
 				for browser environments respectively.</p>
-				<h3 id="manual-browser-test">Manual browser test</h3>
+				<a href="#manual-browser-test" id="manual-browser-test" style="color: inherit; text-decoration: none;">
+					<h3>Manual browser test</h3>
+				</a>
 				<p>Run manual test in browser; prints 100 to dev console.</p>
-				<pre><code class="language-bash">npm run browser-test</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">npm run browser-test</span>
+</code></pre>
 				<p>Then open localhost:8000/test.html in your browser.
 				Open the developer console to see the 100.</p>
-				<h3 id="manual-node-test">Manual node test</h3>
+				<a href="#manual-node-test" id="manual-node-test" style="color: inherit; text-decoration: none;">
+					<h3>Manual node test</h3>
+				</a>
 				<p>Run manual test on node; prints 100.</p>
-				<pre><code class="language-bash">node test.js</code></pre>
-				<h3 id="publish">Publish</h3>
-				<pre><code><span class="hljs-built_in">npm</span> login
-<span class="hljs-built_in">npm</span> version patch/minor/major
-<span class="hljs-built_in">npm</span> publish</code></pre><p>Author:  Lyall Jonathan Di Trapani</p>
+				<pre><code class="language-bash"><span style="color: #000000">node test.js</span>
+</code></pre>
+				<a href="#publish" id="publish" style="color: inherit; text-decoration: none;">
+					<h3>Publish</h3>
+				</a>
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">login</span>
+<span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">version</span><span style="color: #000000"> </span><span style="color: #001080">patch</span><span style="color: #000000">/</span><span style="color: #001080">minor</span><span style="color: #000000">/</span><span style="color: #001080">major</span>
+<span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">publish</span>
+</code></pre>
+				<p>Author:  Lyall Jonathan Di Trapani</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_ljd_16_bit_cpu_.html">"ljd_<wbr>16_<wbr>bit_<wbr>cpu"</a>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="classes/cpu.html" class="tsd-kind-icon">Cpu</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/cpuwithioram.html" class="tsd-kind-icon">Cpu<wbr>With<wbr>IoRam</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/icpu.html" class="tsd-kind-icon">ICpu</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/icpuwithioram.html" class="tsd-kind-icon">ICpu<wbr>With<wbr>IoRam</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#makecpu" class="tsd-kind-icon">make<wbr>Cpu</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#makedebugcpu" class="tsd-kind-icon">make<wbr>Debug<wbr>Cpu</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -168,65 +211,21 @@ cpu.step()
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
-				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
-				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
-				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
-				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
-				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
-				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
-				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
 				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
 				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
-				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
 		</div>
 	</div>
 </footer>
 <div class="container tsd-generator">
-	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>
