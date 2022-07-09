@@ -190,9 +190,8 @@ export class Cpu implements ICpu {
         this.incInstructionCounter()
         return false
       case 'not':
-        this.registers[instruction.destinationRegister] = ~this.registers[
-          instruction.sourceRegister1
-        ]
+        this.registers[instruction.destinationRegister] =
+          ~this.registers[instruction.sourceRegister1]
         this.incInstructionCounter()
         return false
       case 'shf': {
