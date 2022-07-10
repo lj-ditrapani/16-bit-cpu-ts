@@ -11,7 +11,7 @@
     "ncu": "ncu -u && rm -fr node_modules package-lock.json && npm install",
     "tsc": "tsc",
     "browser-build": "tsc -p browser-tsconfig.json",
-    "doc": "typedoc --excludePrivate --out docs/ src && touch docs/.nojekyll",
+    "doc": "typedoc --excludePrivate --out docs/ src/ljd_16_bit_cpu.ts && touch docs/.nojekyll",
     "static": "http-server",
     "all": "npm run lint && tsc && npm run browser-build && npm test"
   },

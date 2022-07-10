@@ -139,6 +139,13 @@ node manual-test.js
 ```
 
 
+### Generate documentation ###
+
+```bash
+npm run doc
+```
+
+
 ### Update dependencies ###
 
 npm run ncu
