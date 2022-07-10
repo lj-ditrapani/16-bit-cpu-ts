@@ -139,6 +139,11 @@ node manual-test.js
 ```
 
 
+### Update dependencies ###
+
+npm run ncu
+
+
 ### Publish ###
 
     npm login
