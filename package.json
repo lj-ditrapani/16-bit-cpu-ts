@@ -8,7 +8,7 @@
     "test": "jest --coverage",
     "browser-test": "http-server -p 8000",
     "lint": "eslint --fix *.js *.json 'src/**/*.ts' 'test/**/*.ts'",
-    "ncu": "ncu -u && npm install",
+    "ncu": "ncu -u && rm -fr node_modules package-lock.json && npm install",
     "tsc": "tsc",
     "browser-build": "tsc -p browser-tsconfig.json",
     "doc": "typedoc --excludePrivate --out docs/ src && touch docs/.nojekyll",
