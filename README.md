@@ -106,9 +106,8 @@ Developing
 
 ### Format, lint, test, build ###
 
-```bash
-npm run all
-```
+
+    npm run all
 
 This produces lib/ljd_16_bit_cpu.js for node environment and browser/ljd_16_bit_cpu.js
 for browser environments respectively.
@@ -118,37 +117,29 @@ for browser environments respectively.
 
 Run manual test in browser; prints 100 to dev console.
 
-```bash
-npm run browser-test
-```
+    npm run browser-test
 
 Then open <localhost:8000/manual-test.html> in your browser.
 Open the developer console to see the 100.
 
-```bash
-firefox localhost:8000/manual-test.html
-```
+    firefox localhost:8000/manual-test.html
 
 
 ### Manual node test ###
 
 Run manual test on node; prints 100.
 
-```bash
-node manual-test.js
-```
+    node manual-test.js
 
 
 ### Generate documentation ###
 
-```bash
-npm run doc
-```
+    npm run doc
 
 
 ### Update dependencies ###
 
-npm run ncu
+    npm run ncu
 
 
 ### Publish ###
