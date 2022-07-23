@@ -77,13 +77,13 @@ export class Cpu implements ICpu {
     ensureLength(dataRom, 32 * 1024, 'dataRom')
     this.instructions = Array.from(programRom).map((word) => {
       const [opCode, a, b, c] = getNibbles(word)
-      return opCode2Instruction[opCode](a, b, c)
+      return opCode2Instruction(opCode)(a, b, c)
     })
     this.ioRam = ioRam1
   }
 
   public run(n: number): Uint16Array {
-    this.instructionCounter = this.ioRam[0]
+    this.instructionCounter = this.ioRam[0] as number
     while (n > 0) {
       --n
       const done = this.step()
@@ -92,12 +92,12 @@ export class Cpu implements ICpu {
       }
     }
     if (this.activeBuffer === 1) {
-      this.ioRam2[0] = this.ioRam1[0]
+      this.ioRam2[0] = this.ioRam1[0] as number
       this.activeBuffer = 2
       this.ioRam = this.ioRam2
       return this.ioRam1
     } else {
-      this.ioRam1[0] = this.ioRam2[0]
+      this.ioRam1[0] = this.ioRam2[0] as number
       this.activeBuffer = 1
       this.ioRam = this.ioRam1
       return this.ioRam2
@@ -105,40 +105,40 @@ export class Cpu implements ICpu {
   }
 
   public step(): boolean {
-    const instruction = this.instructions[this.instructionCounter]
+    const instruction = this.instructions[this.instructionCounter] as Instruction
     switch (instruction.name) {
       case 'end':
         return true
       case 'hby': {
-        const value = this.registers[instruction.destinationRegister]
+        const value = this.registers[instruction.destinationRegister] as number
         this.registers[instruction.destinationRegister] =
           (instruction.immediate8Bit << 8) | (value & 0x00ff)
         this.incInstructionCounter()
         return false
       }
       case 'lby': {
-        const value = this.registers[instruction.destinationRegister]
+        const value = this.registers[instruction.destinationRegister] as number
         this.registers[instruction.destinationRegister] =
           (value & 0xff00) | instruction.immediate8Bit
         this.incInstructionCounter()
         return false
       }
       case 'lod': {
-        const address = this.registers[instruction.sourceRegister1]
+        const address = this.registers[instruction.sourceRegister1] as number
         this.registers[instruction.destinationRegister] = this.read(address)
         this.incInstructionCounter()
         return false
       }
       case 'str': {
-        const address = this.registers[instruction.sourceRegister1]
-        this.write(address, this.registers[instruction.sourceRegister2])
+        const address = this.registers[instruction.sourceRegister1] as number
+        this.write(address, this.registers[instruction.sourceRegister2] as number)
         this.incInstructionCounter()
         return false
       }
       case 'add':
         this.basicAdd(
-          this.registers[instruction.sourceRegister1],
-          this.registers[instruction.sourceRegister2],
+          this.registers[instruction.sourceRegister1] as number,
+          this.registers[instruction.sourceRegister2] as number,
           0,
           instruction.destinationRegister,
         )
@@ -146,8 +146,8 @@ export class Cpu implements ICpu {
         return false
       case 'sub':
         this.basicAdd(
-          this.registers[instruction.sourceRegister1],
-          ~this.registers[instruction.sourceRegister2],
+          this.registers[instruction.sourceRegister1] as number,
+          ~(this.registers[instruction.sourceRegister2] as number),
           1,
           instruction.destinationRegister,
         )
@@ -155,7 +155,7 @@ export class Cpu implements ICpu {
         return false
       case 'adi':
         this.basicAdd(
-          this.registers[instruction.sourceRegister1],
+          this.registers[instruction.sourceRegister1] as number,
           instruction.sourceRegister2,
           0,
           instruction.destinationRegister,
@@ -164,7 +164,7 @@ export class Cpu implements ICpu {
         return false
       case 'sbi':
         this.basicAdd(
-          this.registers[instruction.sourceRegister1],
+          this.registers[instruction.sourceRegister1] as number,
           ~instruction.sourceRegister2,
           1,
           instruction.destinationRegister,
@@ -173,29 +173,30 @@ export class Cpu implements ICpu {
         return false
       case 'and':
         this.registers[instruction.destinationRegister] =
-          this.registers[instruction.sourceRegister1] &
-          this.registers[instruction.sourceRegister2]
+          (this.registers[instruction.sourceRegister1] as number) &
+          (this.registers[instruction.sourceRegister2] as number)
         this.incInstructionCounter()
         return false
       case 'orr':
         this.registers[instruction.destinationRegister] =
-          this.registers[instruction.sourceRegister1] |
-          this.registers[instruction.sourceRegister2]
+          (this.registers[instruction.sourceRegister1] as number) |
+          (this.registers[instruction.sourceRegister2] as number)
         this.incInstructionCounter()
         return false
       case 'xor':
         this.registers[instruction.destinationRegister] =
-          this.registers[instruction.sourceRegister1] ^
-          this.registers[instruction.sourceRegister2]
+          (this.registers[instruction.sourceRegister1] as number) ^
+          (this.registers[instruction.sourceRegister2] as number)
         this.incInstructionCounter()
         return false
       case 'not':
-        this.registers[instruction.destinationRegister] =
-          ~this.registers[instruction.sourceRegister1]
+        this.registers[instruction.destinationRegister] = ~(this.registers[
+          instruction.sourceRegister1
+        ] as number)
         this.incInstructionCounter()
         return false
       case 'shf': {
-        const value = this.registers[instruction.sourceRegister1]
+        const value = this.registers[instruction.sourceRegister1] as number
         this.carryFlag = getShiftCarry(value, instruction.direction, instruction.amount)
         this.registers[instruction.destinationRegister] =
           instruction.direction === 'left'
@@ -205,7 +206,7 @@ export class Cpu implements ICpu {
         return false
       }
       case 'brv': {
-        const value = this.registers[instruction.sourceRegister1]
+        const value = this.registers[instruction.sourceRegister1] as number
         let jump = false
         if (instruction.negative && isNegative(value)) {
           jump = true
@@ -217,7 +218,7 @@ export class Cpu implements ICpu {
           jump = false
         }
         if (jump) {
-          this.instructionCounter = this.registers[instruction.sourceRegister2]
+          this.instructionCounter = this.registers[instruction.sourceRegister2] as number
         } else {
           this.incInstructionCounter()
         }
@@ -233,7 +234,7 @@ export class Cpu implements ICpu {
           jump = false
         }
         if (jump) {
-          this.instructionCounter = this.registers[instruction.sourceRegister2]
+          this.instructionCounter = this.registers[instruction.sourceRegister2] as number
         } else {
           this.incInstructionCounter()
         }
@@ -244,11 +245,11 @@ export class Cpu implements ICpu {
 
   private read(address: number): number {
     if (address < 0x8000) {
-      return this.dataRom[address]
+      return this.dataRom[address] as number
     } else if (address < 0xf800) {
-      return this.dataRam[address & 0x7fff]
+      return this.dataRam[address & 0x7fff] as number
     } else if (address < 0xfc00) {
-      return this.ioRam[address & 0x03ff]
+      return this.ioRam[address & 0x03ff] as number
     } else {
       throw new Error(
         'LJD Cpu: Tried to read from a memory address out of bounds ' + address,
@@ -396,7 +397,14 @@ class Brf {
   }
 }
 
-const opCode2Instruction: ((a: number, b: number, c: number) => Instruction)[] = [
+const opCode2Instruction: (
+  opCode: Nibble,
+) => (a: number, b: number, c: number) => Instruction = (opCode: Nibble) =>
+  opCode2InstructionArray[opCode] as (a: number, b: number, c: number) => Instruction
+
+const opCode2InstructionArray: ReadonlyArray<
+  (a: number, b: number, c: number) => Instruction
+> = [
   (_a, _b, _c) => end,
   (a, b, c) => new LoadByteInstruction('hby', a, b, c),
   (a, b, c) => new LoadByteInstruction('lby', a, b, c),
@@ -443,9 +451,11 @@ const isPositiveOrZero = (word: number): boolean => word < 32768
 
 const isNegative = (word: number): boolean => word >= 32768
 
-const getNibbles = (word: number): [number, number, number, number] => [
-  word >> 12,
-  (word >> 8) & 0xf,
-  (word >> 4) & 0xf,
-  word & 0xf,
+const getNibbles = (word: number): [Nibble, Nibble, Nibble, Nibble] => [
+  (word >> 12) as Nibble,
+  ((word >> 8) & 0xf) as Nibble,
+  ((word >> 4) & 0xf) as Nibble,
+  (word & 0xf) as Nibble,
 ]
+
+type Nibble = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0xa | 0xb | 0xc | 0xd | 0xe | 0xf
