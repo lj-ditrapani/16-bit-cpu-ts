@@ -2,7 +2,7 @@
 
 // The example code in the README
 
-const { makeCpu } = require('/home/ljd/fun/16-bit-cpu-ts')
+import { makeCpu } from './lib/ljd_16_bit_cpu.js'
 // const { makeCpu, makeDebugCpu } = require('ljd_16_bit_cpu');
 // This program adds the values in dataRom[0] and dataRom[1]
 // then stores the result in ioRam[512]
