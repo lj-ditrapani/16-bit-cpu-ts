@@ -1,10 +1,11 @@
 {
   "extends": "@tsconfig/strictest/tsconfig.json",
   "extends": "@tsconfig/esm/tsconfig.json",
-  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "declaration": true,
-    "module": "es2022",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
     "target": "ES2020",
     "removeComments": true,
     "sourceMap": true,
