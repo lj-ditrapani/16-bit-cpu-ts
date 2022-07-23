@@ -104,6 +104,14 @@ API Documentation
 Developing
 ----------
 
+Install node 16.  You can use nvm to manage node versions.
+
+
+### First time install ###
+
+    npm install
+
+
 ### Format, lint, test, build ###
 
 
@@ -111,6 +119,15 @@ Developing
 
 This produces lib/ljd_16_bit_cpu.js for node environment and browser/ljd_16_bit_cpu.js
 for browser environments respectively.
+
+
+### Test coverage ###
+
+    # Run the tests with `npm run all` or
+    npm test
+    # This will generate the test coverage report
+    # Then open the test coverage report
+    firefox coverage/lcov-report/index.html
 
 
 ### Manual browser test ###
@@ -135,6 +152,7 @@ Run manual test on node; prints 100.
 ### Generate documentation ###
 
     npm run doc
+    firefox docs/index.html &
 
 
 ### Update dependencies ###
