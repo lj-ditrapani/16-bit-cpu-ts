@@ -2,18 +2,20 @@
   "name": "ljd-16-bit-cpu",
   "version": "0.4.0",
   "description": "LJD 16-bit processor",
+  "type": "module",
   "main": "lib/ljd_16_bit_cpu.js",
   "types": "lib/ljd_16_bit_cpu.d.ts",
   "scripts": {
     "test": "jest --coverage",
     "browser-test": "http-server -p 8000",
-    "lint": "eslint --fix *.js *.json 'src/**/*.ts' 'test/**/*.ts'",
+    "fmt": "prettier --write '*.yaml' '*.json'",
+    "eslint": "eslint --fix *.js *.ts 'src/**/*.ts' 'test/**/*.ts'",
+    "lint": "npm run fmt && npm run eslint",
     "ncu": "ncu -u && rm -fr node_modules package-lock.json && npm install",
     "tsc": "tsc",
-    "browser-build": "tsc -p browser-tsconfig.json",
     "doc": "typedoc --excludePrivate --out docs/ src/ljd_16_bit_cpu.ts && touch docs/.nojekyll",
     "static": "http-server",
-    "all": "npm run lint && tsc && npm run browser-build && npm test"
+    "all": "npm run lint && tsc && npm test"
   },
   "keywords": [
     "cpu",
@@ -23,6 +25,9 @@
   "repository": "https://github.com/lj-ditrapani/16-bit-cpu-ts",
   "license": "ISC",
   "devDependencies": {
+    "@tsconfig/esm": "^1.0.2",
+    "@tsconfig/node16-strictest-esm": "^1.0.3",
+    "@tsconfig/strictest": "^1.0.1",
     "@types/jest": "^28.1.4",
     "@types/node": "^18.0.3",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
@@ -41,7 +46,6 @@
     "typescript": "^4.7.4"
   },
   "files": [
-    "lib",
-    "browser"
+    "lib"
   ]
 }

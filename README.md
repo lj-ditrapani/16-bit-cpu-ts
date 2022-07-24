@@ -35,7 +35,7 @@ From browser:
 
 ```html
 <script type="module">
-import { makeCpu, makeDebugCpu } from "/browser/ljd_16_bit_cpu.js"
+import { makeCpu, makeDebugCpu } from "/lib/ljd_16_bit_cpu.js"
 // do stuff
 </script>
 ```
@@ -43,7 +43,7 @@ import { makeCpu, makeDebugCpu } from "/browser/ljd_16_bit_cpu.js"
 From node.js:
 
 ```js
-const { makeCpu, makeDebugCpu } = require('ljd-16-bit-cpu')
+import { makeCpu, makeDebugCpu } from 'ljd-16-bit-cpu'
 // do stuff
 ```
 
@@ -104,13 +104,30 @@ API Documentation
 Developing
 ----------
 
+Install node 16.  You can use nvm to manage node versions.
+
+
+### First time install ###
+
+    npm install
+
+
 ### Format, lint, test, build ###
 
 
     npm run all
 
-This produces lib/ljd_16_bit_cpu.js for node environment and browser/ljd_16_bit_cpu.js
-for browser environments respectively.
+This produces a single ljd_16_bit_cpu.js esm module for both node and
+browser environments.
+
+
+### Test coverage ###
+
+    # Run the tests with `npm run all` or
+    npm test
+    # This will generate the test coverage report
+    # Then open the test coverage report
+    firefox coverage/lcov-report/index.html
 
 
 ### Manual browser test ###
@@ -135,6 +152,7 @@ Run manual test on node; prints 100.
 ### Generate documentation ###
 
     npm run doc
+    firefox docs/index.html &
 
 
 ### Update dependencies ###
