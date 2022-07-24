@@ -35,7 +35,7 @@ From browser:
 
 ```html
 <script type="module">
-import { makeCpu, makeDebugCpu } from "/browser/ljd_16_bit_cpu.js"
+import { makeCpu, makeDebugCpu } from "/lib/ljd_16_bit_cpu.js"
 // do stuff
 </script>
 ```
@@ -43,7 +43,7 @@ import { makeCpu, makeDebugCpu } from "/browser/ljd_16_bit_cpu.js"
 From node.js:
 
 ```js
-const { makeCpu, makeDebugCpu } = require('ljd-16-bit-cpu')
+import { makeCpu, makeDebugCpu } from 'ljd-16-bit-cpu'
 // do stuff
 ```
 
@@ -117,8 +117,8 @@ Install node 16.  You can use nvm to manage node versions.
 
     npm run all
 
-This produces lib/ljd_16_bit_cpu.js for node environment and browser/ljd_16_bit_cpu.js
-for browser environments respectively.
+This produces a single ljd_16_bit_cpu.js esm module for both node and
+browser environments.
 
 
 ### Test coverage ###
