@@ -44,10 +44,10 @@
   <h2>Usage</h2>
 </a>
 <p>From browser:</p>
-<pre><code class="language-html"><span class="hl-3">&lt;</span><span class="hl-4">script</span><span class="hl-5"> </span><span class="hl-6">type</span><span class="hl-5">=</span><span class="hl-7">&quot;module&quot;</span><span class="hl-3">&gt;</span><br/><span class="hl-8">import</span><span class="hl-5"> { </span><span class="hl-0">makeCpu</span><span class="hl-5">, </span><span class="hl-0">makeDebugCpu</span><span class="hl-5"> } </span><span class="hl-8">from</span><span class="hl-5"> </span><span class="hl-9">&quot;/browser/ljd_16_bit_cpu.js&quot;</span><br/><span class="hl-10">// do stuff</span><br/><span class="hl-3">&lt;/</span><span class="hl-4">script</span><span class="hl-3">&gt;</span>
+<pre><code class="language-html"><span class="hl-3">&lt;</span><span class="hl-4">script</span><span class="hl-5"> </span><span class="hl-6">type</span><span class="hl-5">=</span><span class="hl-7">&quot;module&quot;</span><span class="hl-3">&gt;</span><br/><span class="hl-8">import</span><span class="hl-5"> { </span><span class="hl-0">makeCpu</span><span class="hl-5">, </span><span class="hl-0">makeDebugCpu</span><span class="hl-5"> } </span><span class="hl-8">from</span><span class="hl-5"> </span><span class="hl-9">&quot;/lib/ljd_16_bit_cpu.js&quot;</span><br/><span class="hl-10">// do stuff</span><br/><span class="hl-3">&lt;/</span><span class="hl-4">script</span><span class="hl-3">&gt;</span>
 </code></pre>
 <p>From node.js:</p>
-<pre><code class="language-js"><span class="hl-11">const</span><span class="hl-1"> { </span><span class="hl-12">makeCpu</span><span class="hl-1">, </span><span class="hl-12">makeDebugCpu</span><span class="hl-1"> } = </span><span class="hl-13">require</span><span class="hl-1">(</span><span class="hl-9">&#39;ljd-16-bit-cpu&#39;</span><span class="hl-1">)</span><br/><span class="hl-10">// do stuff</span>
+<pre><code class="language-js"><span class="hl-8">import</span><span class="hl-1"> { </span><span class="hl-0">makeCpu</span><span class="hl-1">, </span><span class="hl-0">makeDebugCpu</span><span class="hl-1"> } </span><span class="hl-8">from</span><span class="hl-1"> </span><span class="hl-9">&#39;ljd-16-bit-cpu&#39;</span><br/><span class="hl-10">// do stuff</span>
 </code></pre>
 <p>Run a program</p>
 <pre><code class="language-js"><span class="hl-10">// programRom is a array of 16-bit integers with length &lt;= 65,536</span><br/><span class="hl-11">const</span><span class="hl-1"> </span><span class="hl-12">cpuWithIoRam</span><span class="hl-1"> = </span><span class="hl-13">makeCpu</span><span class="hl-1">(</span><span class="hl-0">programRom</span><span class="hl-1">, </span><span class="hl-0">dataRom</span><span class="hl-1">)</span><br/><span class="hl-11">const</span><span class="hl-1"> </span><span class="hl-12">cpu</span><span class="hl-1"> = </span><span class="hl-0">cpuWithIoRam</span><span class="hl-1">.</span><span class="hl-0">cpu</span><br/><span class="hl-11">const</span><span class="hl-1"> </span><span class="hl-12">ioRam</span><span class="hl-1"> = </span><span class="hl-0">cpu</span><span class="hl-1">.</span><span class="hl-13">run</span><span class="hl-1">(</span><span class="hl-2">1000</span><span class="hl-1">)</span>
@@ -67,43 +67,57 @@
 <a href="#developing" id="developing" style="color: inherit; text-decoration: none;">
   <h2>Developing</h2>
 </a>
+<p>Install node 16.  You can use nvm to manage node versions.</p>
+
+<a href="#first-time-install" id="first-time-install" style="color: inherit; text-decoration: none;">
+  <h3>First time install</h3>
+</a>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">install</span>
+</code></pre>
 
 <a href="#format-lint-test-build" id="format-lint-test-build" style="color: inherit; text-decoration: none;">
   <h3>Format, lint, test, build</h3>
 </a>
-<pre><code class="language-bash"><span class="hl-1">npm run all</span>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">all</span>
 </code></pre>
-<p>This produces lib/ljd_16_bit_cpu.js for node environment and browser/ljd_16_bit_cpu.js
-for browser environments respectively.</p>
+<p>This produces a single ljd_16_bit_cpu.js esm module for both node and
+browser environments.</p>
+
+<a href="#test-coverage" id="test-coverage" style="color: inherit; text-decoration: none;">
+  <h3>Test coverage</h3>
+</a>
+<pre><code><span class="hl-1"># </span><span class="hl-0">Run</span><span class="hl-1"> </span><span class="hl-0">the</span><span class="hl-1"> </span><span class="hl-0">tests</span><span class="hl-1"> </span><span class="hl-8">with</span><span class="hl-1"> </span><span class="hl-9">`npm run all`</span><span class="hl-1"> </span><span class="hl-0">or</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">test</span><br/><span class="hl-1"># </span><span class="hl-0">This</span><span class="hl-1"> </span><span class="hl-0">will</span><span class="hl-1"> </span><span class="hl-0">generate</span><span class="hl-1"> </span><span class="hl-0">the</span><span class="hl-1"> </span><span class="hl-0">test</span><span class="hl-1"> </span><span class="hl-0">coverage</span><span class="hl-1"> </span><span class="hl-0">report</span><br/><span class="hl-1"># </span><span class="hl-0">Then</span><span class="hl-1"> </span><span class="hl-0">open</span><span class="hl-1"> </span><span class="hl-0">the</span><span class="hl-1"> </span><span class="hl-0">test</span><span class="hl-1"> </span><span class="hl-0">coverage</span><span class="hl-1"> </span><span class="hl-0">report</span><br/><span class="hl-0">firefox</span><span class="hl-1"> </span><span class="hl-0">coverage</span><span class="hl-1">/</span><span class="hl-0">lcov</span><span class="hl-1">-</span><span class="hl-0">report</span><span class="hl-1">/</span><span class="hl-0">index</span><span class="hl-1">.</span><span class="hl-0">html</span>
+</code></pre>
 
 <a href="#manual-browser-test" id="manual-browser-test" style="color: inherit; text-decoration: none;">
   <h3>Manual browser test</h3>
 </a>
 <p>Run manual test in browser; prints 100 to dev console.</p>
-<pre><code class="language-bash"><span class="hl-1">npm run browser-test</span>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">browser</span><span class="hl-1">-</span><span class="hl-0">test</span>
 </code></pre>
 <p>Then open <a href="localhost:8000/manual-test.html">localhost:8000/manual-test.html</a> in your browser.
 Open the developer console to see the 100.</p>
-<pre><code class="language-bash"><span class="hl-1">firefox localhost:8000/manual-test.html</span>
+<pre><code><span class="hl-0">firefox</span><span class="hl-1"> </span><span class="hl-14">localhost</span><span class="hl-1">:</span><span class="hl-2">8000</span><span class="hl-1">/</span><span class="hl-0">manual</span><span class="hl-1">-</span><span class="hl-0">test</span><span class="hl-1">.</span><span class="hl-0">html</span>
 </code></pre>
 
 <a href="#manual-node-test" id="manual-node-test" style="color: inherit; text-decoration: none;">
   <h3>Manual node test</h3>
 </a>
 <p>Run manual test on node; prints 100.</p>
-<pre><code class="language-bash"><span class="hl-1">node manual-test.js</span>
+<pre><code><span class="hl-0">node</span><span class="hl-1"> </span><span class="hl-0">manual</span><span class="hl-1">-</span><span class="hl-0">test</span><span class="hl-1">.</span><span class="hl-0">js</span>
 </code></pre>
 
 <a href="#generate-documentation" id="generate-documentation" style="color: inherit; text-decoration: none;">
   <h3>Generate documentation</h3>
 </a>
-<pre><code class="language-bash"><span class="hl-1">npm run doc</span>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">doc</span><br/><span class="hl-0">firefox</span><span class="hl-1"> </span><span class="hl-0">docs</span><span class="hl-1">/</span><span class="hl-0">index</span><span class="hl-1">.</span><span class="hl-0">html</span><span class="hl-1"> &amp;</span>
 </code></pre>
 
 <a href="#update-dependencies" id="update-dependencies" style="color: inherit; text-decoration: none;">
   <h3>Update dependencies</h3>
 </a>
-<p>npm run ncu</p>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">ncu</span>
+</code></pre>
 
 <a href="#publish" id="publish" style="color: inherit; text-decoration: none;">
   <h3>Publish</h3>
