@@ -104,10 +104,15 @@ API Documentation
 Developing
 ----------
 
-Install node 16.  You can use nvm to manage node versions.
 
+### Setup ###
 
-### First time install ###
+Install node with [https://github.com/nvm-sh/nvm](nvm).
+
+    nvm install     # one-time install
+    nvm use         # each time you enter the project directory
+
+Install npm packages.
 
     npm install
 
@@ -162,8 +167,10 @@ Run manual test on node; prints 100.
 
 ### Publish ###
 
-    npm login
+    rm -fr lib
+    npm run all
     npm version patch/minor/major
+    npm login
     npm publish
 
 
