@@ -299,7 +299,7 @@ type Instruction =
 type instructionsWith3Nibbles = 'add' | 'sub' | 'adi' | 'sbi' | 'and' | 'orr' | 'xor'
 
 class End {
-  public readonly name: 'end' = 'end'
+  public readonly name: 'end' = 'end' as const
 }
 
 const end = new End()
@@ -318,7 +318,7 @@ class LoadByteInstruction {
 }
 
 class Lod {
-  public readonly name: 'lod' = 'lod'
+  public readonly name: 'lod' = 'lod' as const
 
   constructor(
     public readonly sourceRegister1: number,
@@ -327,7 +327,7 @@ class Lod {
 }
 
 class Str {
-  public readonly name: 'str' = 'str'
+  public readonly name: 'str' = 'str' as const
 
   constructor(
     public readonly sourceRegister1: number,
@@ -345,7 +345,7 @@ class Nibbles3Instruction {
 }
 
 class Not {
-  public readonly name: 'not' = 'not'
+  public readonly name: 'not' = 'not' as const
 
   constructor(
     public readonly sourceRegister1: number,
@@ -354,7 +354,7 @@ class Not {
 }
 
 class Shf {
-  public readonly name: 'shf' = 'shf'
+  public readonly name: 'shf' = 'shf' as const
   public readonly direction: 'left' | 'right'
   public readonly amount: number
 
@@ -369,7 +369,7 @@ class Shf {
 }
 
 class Brv {
-  public readonly name: 'brv' = 'brv'
+  public readonly name: 'brv' = 'brv' as const
   public readonly negative: boolean
   public readonly zero: boolean
   public readonly positive: boolean
@@ -386,7 +386,7 @@ class Brv {
 }
 
 class Brf {
-  public readonly name: 'brf' = 'brf'
+  public readonly name: 'brf' = 'brf' as const
   public readonly overflow: boolean
   public readonly carry: boolean
 
